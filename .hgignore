@@ -1,0 +1,12 @@
+syntax: glob
+
+*.tar.gz
+*~
+aclocal.m4
+autom4te.cache
+build-aux
+config.log
+config.status
+configure
+Makefile
+Makefile.in
