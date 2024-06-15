@@ -3,5 +3,5 @@
 aclocaldir = $(datadir)/aclocal
 
 dist_aclocal_DATA = \
-	devkitpro.m4
-
+	devkitpro.m4 \
+	devkitpro_ppc.m4

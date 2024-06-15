@@ -1,5 +1,3 @@
-# Macro to check for the location of devkitPro
-#
 # SYNOPSIS
 #
 #   DEVKITPRO_INIT
@@ -10,7 +8,7 @@
 #   `--with-devkitpro' option.
 #
 #   The variables `PORTLIBS_CPPFLAGS' and `PORTLIBS_LIBS' are also declared precious, but
-#   left unmodified. Other toolchain macros will append flags to these variables.
+#   left unmodified. Other toolchain macros will add flags to these variables.
 #
 # LICENSE
 #
