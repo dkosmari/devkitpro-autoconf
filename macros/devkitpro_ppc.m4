@@ -8,10 +8,10 @@
 #  `AM_INIT_AUTOMAKE', and before any cross-compilation tool.
 #
 #   Output variables:
-#     `PATH': appends `devkitPPC/bin'.
-#     `DEVKITPPC': path to devkitPPC
-#     `PORTLIBS_CPPFLAGS': prepends include paths for PPC portlibs.
-#     `PORTLIBS_LIBS': prepends library paths for PPC portlibs.
+#     - `DEVKITPPC': path to devkitPPC
+#     - `DEVKITPRO_CPPFLAGS': prepends include paths for PPC portlibs.
+#     - `DEVKITPRO_LIBS': prepends library paths for PPC portlibs.
+#     - `PATH': appends `devkitPPC/bin' if necessary.
 #
 # LICENSE
 #
@@ -69,12 +69,11 @@ AC_DEFUN([DEVKITPRO_PPC_INIT],[
 
     # set PORTLIBS_PPC_ROOT
     AS_VAR_SET([PORTLIBS_PPC_ROOT], [$PORTLIBS_ROOT/ppc])
-    AC_SUBST([PORTLIBS_PPC_ROOT])
+    # AC_SUBST([PORTLIBS_PPC_ROOT])
 
 
-    # prepend to PORTLIBS_ vars
-    AS_VAR_SET([PORTLIBS_CPPFLAGS], ["-I$PORTLIBS_PPC_ROOT/include $PORTLIBS_CPPFLAGS"])
-    AS_VAR_SET([PORTLIBS_LIBS],     ["-L$PORTLIBS_PPC_ROOT/lib $PORTLIBS_LIBS"])
-
+    # prepend to DEVKITPRO_ variables
+    AS_VAR_SET([DEVKITPRO_CPPFLAGS], ["-I$PORTLIBS_PPC_ROOT/include $DEVKITPRO_CPPFLAGS"])
+    AS_VAR_SET([DEVKITPRO_LIBS],     ["-L$PORTLIBS_PPC_ROOT/lib $DEVKITPRO_LIBS"])
 
 ])

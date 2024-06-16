@@ -4,11 +4,15 @@
 #
 # DESCRIPTION
 #
-#   This macro declares DEVKITPRO as a precious variable, and overrides it with the
-#   `--with-devkitpro' option.
+#   This macro sets up base devkitPro variables to be used by other macros. The option
+#   `--with-devkitpro=' is also processed, to override the `DEVKITPRO' variable.
 #
-#   The variables `PORTLIBS_CPPFLAGS' and `PORTLIBS_LIBS' are also declared precious, but
-#   left unmodified. Other toolchain macros will add flags to these variables.
+#   Output variables:
+#     - `DEVKITPRO': path to devkitPro.
+#     - `DEVKITPRO_CFLAGS': declared precious.
+#     - `DEVKITPRO_CPPFLAGS': declared precious.
+#     - `DEVKITPRO_LDFLAGS': declared precious.
+#     - `DEVKITPRO_LIBS': declared precious.
 #
 # LICENSE
 #
@@ -47,10 +51,12 @@ AC_DEFUN([DEVKITPRO_INIT],[
 
     # set PORTLIBS_ROOT
     AS_VAR_SET([PORTLIBS_ROOT], [$DEVKITPRO/portlibs])
-    AC_SUBST([PORTLIBS_ROOT])
+    # AC_SUBST([PORTLIBS_ROOT])
 
-    # make PORTLIBS_CPPFLAGS and PORTLIBS_LIBS precious
-    AC_ARG_VAR([PORTLIBS_CPPFLAGS], [flags to find portlibs headers])
-    AC_ARG_VAR([PORTLIBS_LIBS], [flags to link against portlibs libraries])
+
+    AC_ARG_VAR([DEVKITPRO_CFLAGS], [C/C++ compilation flags for devkitPro])
+    AC_ARG_VAR([DEVKITPRO_CPPFLAGS], [includes search path for devkitPro])
+    AC_ARG_VAR([DEVKITPRO_LDFLAGS], [linker flags for devkitPro])
+    AC_ARG_VAR([DEVKITPRO_LIBS], [libraries for devkitPro])
 
 ])
