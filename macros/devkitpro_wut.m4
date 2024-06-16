@@ -38,7 +38,7 @@ AC_DEFUN([DEVKITPRO_WUT_INIT],[
           [AC_MSG_RESULT([yes])])
 
     AC_CHECK_PROGS([ELF2RPL], [elf2rpl])
-
+    AC_CHECK_PROGS([WUHBTOOL], [wuhbtool])
 
     # set PORTLIBS_WIIU_ROOT
     AS_VAR_SET([PORTLIBS_WIIU_ROOT], [$PORTLIBS_ROOT/wiiu])
@@ -48,21 +48,37 @@ AC_DEFUN([DEVKITPRO_WUT_INIT],[
     AC_SUBST([WUT_ROOT])
 
 
-    AX_PREPEND_FLAG([DEVKITPRO_CPPFLAGS],
-                    [-D__WIIU__ -D__WUT__ -I$WUT_ROOT/include -I$WUT_ROOT/usr/include])
+    AX_PREPEND_FLAG([-D__WIIU__],                    [DEVKITPRO_CPPFLAGS])
+    AX_PREPEND_FLAG([-D__WUT__],                     [DEVKITPRO_CPPFLAGS])
+    AX_PREPEND_FLAG([-I$WUT_ROOT/include],           [DEVKITPRO_CPPFLAGS])
+    AX_PREPEND_FLAG([-I$WUT_ROOT/usr/include],       [DEVKITPRO_CPPFLAGS])
+    AX_PREPEND_FLAG([-I$PORTLIBS_WIIU_ROOT/include], [DEVKITPRO_CPPFLAGS])
 
-    AX_PREPEND_FLAG([DEVKITPRO_CFLAGS],
-                    [-mcpu=750 -meabi -mhard-float])
-    
-    AX_PREPEND_FLAG([DEVKITPRO_LIBS],
-                    [-L$WUT_ROOT/lib -L$WUT_ROOT/usr/lib -lwut])
+    AX_PREPEND_FLAG([-mcpu=750],    [DEVKITPRO_CFLAGS])
+    AX_PREPEND_FLAG([-meabi],       [DEVKITPRO_CFLAGS])
+    AX_PREPEND_FLAG([-mhard-float], [DEVKITPRO_CFLAGS])
 
-    AX_PREPEND_FLAG([DEVKITPRO_LDFLAGS],
-                    [-specs=$WUT_ROOT/share/wut.specs])
-    
+    AX_PREPEND_FLAG([-lwut],                     [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-L$WUT_ROOT/lib],           [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-L$WUT_ROOT/usr/lib],       [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-L$PORTLIBS_WIIU_ROOT/lib], [DEVKITPRO_LIBS])
+
+    AX_PREPEND_FLAG([-specs=$WUT_ROOT/share/wut.specs], [DEVKITPRO_LDFLAGS])
+
     # set DEVKITPRO_RPL_LDFLAGS
     AS_VAR_SET([DEVKITPRO_RPL_LDFLAGS],
                ["-specs=$WUT_ROOT/share/wut.specs -specs=$WUT_ROOT/share/rpl.specs"])
     AC_SUBST([DEVKITPRO_RPL_LDFLAGS])
+
+
+    # custom Makefile rules
+    AX_ADD_AM_MACRO([
+CLEANFILES ?=
+CLEANFILES += *.rpx *.rpl
+%.rpx: %.strip.elf
+	\$(ELF2RPL) \$< \$[@]
+%.rpl: %.strip.elf
+	\$(ELF2RPL) --rpl \$< \$[@]
+])
 
 ])

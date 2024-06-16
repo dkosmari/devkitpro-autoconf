@@ -53,9 +53,10 @@ AC_DEFUN([DEVKITPRO_PPC_INIT],[
     AC_SUBST([DEVKITPPC])
 
 
-    # See if we can find GCC in PATH already; if not, append $DEVKITPPC/bin to PATH
+    # See if we can find cross tools in PATH already; if not, append $DEVKITPPC/bin to
+    # PATH
     AC_MSG_CHECKING([if $DEVKITPPC/bin is in PATH])
-    AS_IF([! which powerpc-eabi-gcc 1>/dev/null 2>/dev/null],
+    AS_IF([! which powerpc-eabi-nm 1>/dev/null 2>/dev/null],
           [
               AC_MSG_RESULT([no, will append to PATH])
               AS_VAR_APPEND([PATH], [":$DEVKITPPC/bin"])
@@ -65,7 +66,17 @@ AC_DEFUN([DEVKITPRO_PPC_INIT],[
 
 
     AS_VAR_SET([PORTLIBS_PPC_ROOT], [$PORTLIBS_ROOT/ppc])
-    AX_PREPEND_FLAG([DEVKITPRO_CPPFLAGS], [-I$PORTLIBS_PPC_ROOT/include])
-    AX_PREPEND_FLAG([DEVKITPRO_LIBS],     [-L$PORTLIBS_PPC_ROOT/lib])
+
+    AX_PREPEND_FLAG([-I$PORTLIBS_PPC_ROOT/include], [DEVKITPRO_CPPFLAGS])
+    AX_PREPEND_FLAG([-L$PORTLIBS_PPC_ROOT/lib], [DEVKITPRO_LIBS])
+
+    # custom Makefile rules
+    AX_ADD_AM_MACRO([
+CLEANFILES ?=
+CLEANFILES = *.strip.elf
+%.strip.elf: %.elf
+	\$(STRIP) -g \$< -o \$[@]
+])
+
 
 ])

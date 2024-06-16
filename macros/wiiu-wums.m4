@@ -24,23 +24,21 @@ AC_DEFUN([WIIU_WUMS_INIT],[
     # set WIIU_WUMS_ROOT
     AS_VAR_SET([WIIU_WUMS_ROOT], [$DEVKITPRO/wums])
 
-    AX_PREPEND_FLAG([DEVKITPRO_CPPFLAGS],
-                    [-I$WIIU_WUMS_ROOT/include])
+    AX_PREPEND_FLAG([-I$WIIU_WUMS_ROOT/include], [DEVKITPRO_CPPFLAGS])
 
-    AX_PREPREND_FLAG([DEVKITPRO_LIBS],
-                    [-L$WIIU_WUMS_ROOT/lib])
+    AX_PREPEND_FLAG([-L$WIIU_WUMS_ROOT/lib], [DEVKITPRO_LIBS])
 
 ])
 
 
-# WIIU_WUMS_LIB_CURLWRAPPER
-# -------------------------
+# WIIU_WUMS_CHECK_LIB_CURLWRAPPER
+# -------------------------------
 # Checks for presence of libcurlwrapper.
 #
 # Output variables:
 #   - `DEVKITPRO_LIBS'
 
-AC_DEFUN([WIIU_WUMS_LIB_CURLWRAPPER],[
+AC_DEFUN([WIIU_WUMS_CHECK_LIB_CURLWRAPPER],[
 
     AC_REQUIRE([WIIU_WUMS_INIT])
 
@@ -50,7 +48,7 @@ AC_DEFUN([WIIU_WUMS_LIB_CURLWRAPPER],[
     AX_CHECK_LIBRARY([WIIU_WUMS_LIB_CURLWRAPPER],
                      [curl/curl.h],
                      [curlwrapper],
-                     [AX_PREPEND_FLAG([DEVKITPRO_LIBS], [-lcurlwrapper])],
+                     [AX_PREPEND_FLAG([-lcurlwrapper], [DEVKITPRO_LIBS])],
                      [AC_MSG_ERROR([libcurlwrapper not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libcurlwrapper])])
 
     AX_VAR_POPVALUE([LIBS])
@@ -58,14 +56,14 @@ AC_DEFUN([WIIU_WUMS_LIB_CURLWRAPPER],[
 ])
 
 
-# WIIU_WUMS_LIB_NOTIFICATIONS
-# ---------------------------
+# WIIU_WUMS_CHECK_LIB_NOTIFICATIONS
+# ---------------------------------
 # Checks for presence of libnotifications.
 #
 # Output variables:
 #   - `DEVKITPRO_LIBS'
 
-AC_DEFUN([WIIU_WUMS_LIB_NOTIFICATIONS],[
+AC_DEFUN([WIIU_WUMS_CHECK_LIB_NOTIFICATIONS],[
 
     AC_REQUIRE([WIIU_WUMS_INIT])
 
@@ -75,7 +73,7 @@ AC_DEFUN([WIIU_WUMS_LIB_NOTIFICATIONS],[
     AX_CHECK_LIBRARY([WIIU_WUMS_LIB_NOTIFICATIONS],
                      [notifications/notifications.h],
                      [notifications],
-                     [AX_PREPEND_FLAG([DEVKITPRO_LIBS], [-lnotifications])],
+                     [AX_PREPEND_FLAG([-lnotifications], [DEVKITPRO_LIBS])],
                      [AC_MSG_ERROR([libnotifications not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libnotifications])])
 
     AX_VAR_POPVALUE([LIBS])
