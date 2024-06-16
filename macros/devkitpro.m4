@@ -1,28 +1,25 @@
-# SYNOPSIS
+# -*- mode: autoconf -*-
+# devkitpro.m4 - Macros to handle devkitPro setup.
+
+# Copyright (c) 2024 Daniel K. O. <dkosmari>
 #
-#   DEVKITPRO_INIT
-#
-# DESCRIPTION
-#
-#   This macro sets up base devkitPro variables to be used by other macros. The option
-#   `--with-devkitpro=' is also processed, to override the `DEVKITPRO' variable.
-#
-#   Output variables:
-#     - `DEVKITPRO': path to devkitPro.
-#     - `DEVKITPRO_CFLAGS': declared precious.
-#     - `DEVKITPRO_CPPFLAGS': declared precious.
-#     - `DEVKITPRO_LDFLAGS': declared precious.
-#     - `DEVKITPRO_LIBS': declared precious.
-#
-# LICENSE
-#
-#   Copyright (c) 2024 Daniel K. O. <dkosmari>
-#
-#   Copying and distribution of this file, with or without modification, are permitted in
-#   any medium without royalty provided the copyright notice and this notice are
-#   preserved. This file is offered as-is, without any warranty.
+# Copying and distribution of this file, with or without modification, are permitted in
+# any medium without royalty provided the copyright notice and this notice are
+# preserved. This file is offered as-is, without any warranty.
 
 #serial 1
+
+# DEVKITPRO_INIT
+# --------------
+# This macro sets up base devkitPro variables to be used by other macros. The option
+# `--with-devkitpro=' is also processed, to override the `DEVKITPRO' variable.
+#
+# Output variables:
+#   - `DEVKITPRO': path to devkitPro.
+#   - `DEVKITPRO_CFLAGS': declared precious.
+#   - `DEVKITPRO_CPPFLAGS': declared precious.
+#   - `DEVKITPRO_LDFLAGS': declared precious.
+#   - `DEVKITPRO_LIBS': declared precious.
 
 AC_DEFUN([DEVKITPRO_INIT],[
 
@@ -51,7 +48,6 @@ AC_DEFUN([DEVKITPRO_INIT],[
 
     # set PORTLIBS_ROOT
     AS_VAR_SET([PORTLIBS_ROOT], [$DEVKITPRO/portlibs])
-    # AC_SUBST([PORTLIBS_ROOT])
 
 
     AC_ARG_VAR([DEVKITPRO_CFLAGS], [C/C++ compilation flags for devkitPro])

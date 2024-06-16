@@ -1,27 +1,24 @@
-# SYNOPSIS
+# -*- mode: autoconf -*-
+# devkitpro_ppc.m4 - Macros to handle PPC toolchains.
+
+# Copyright (c) 2024 Daniel K. O. <dkosmari>
 #
-#   DEVKITPRO_PPC_INIT
-#
-# DESCRIPTION
-#
-#  This macro adjuts the environment for PPC-based targets. It must be called before
-#  `AM_INIT_AUTOMAKE', and before any cross-compilation tool.
-#
-#   Output variables:
-#     - `DEVKITPPC': path to devkitPPC
-#     - `DEVKITPRO_CPPFLAGS': prepends include paths for PPC portlibs.
-#     - `DEVKITPRO_LIBS': prepends library paths for PPC portlibs.
-#     - `PATH': appends `devkitPPC/bin' if necessary.
-#
-# LICENSE
-#
-#   Copyright (c) 2024 Daniel K. O. <dkosmari>
-#
-#   Copying and distribution of this file, with or without modification, are permitted in
-#   any medium without royalty provided the copyright notice and this notice are
-#   preserved. This file is offered as-is, without any warranty.
+# Copying and distribution of this file, with or without modification, are permitted in
+# any medium without royalty provided the copyright notice and this notice are
+# preserved. This file is offered as-is, without any warranty.
 
 #serial 1
+
+# DEVKITPRO_PPC_INIT
+# ------------------
+# This macro adjuts the environment for PPC-based targets. It must be called before
+# `AM_INIT_AUTOMAKE', and before any cross-compilation tool is checked.
+#
+# Output variables:
+#   - `DEVKITPPC': path to devkitPPC
+#   - `DEVKITPRO_CPPFLAGS': prepends include paths for PPC portlibs.
+#   - `DEVKITPRO_LIBS': prepends library paths for PPC portlibs.
+#   - `PATH': appends `devkitPPC/bin' if necessary.
 
 AC_DEFUN([DEVKITPRO_PPC_INIT],[
 
@@ -67,13 +64,8 @@ AC_DEFUN([DEVKITPRO_PPC_INIT],[
           [AC_MSG_RESULT([yes])])
 
 
-    # set PORTLIBS_PPC_ROOT
     AS_VAR_SET([PORTLIBS_PPC_ROOT], [$PORTLIBS_ROOT/ppc])
-    # AC_SUBST([PORTLIBS_PPC_ROOT])
-
-
-    # prepend to DEVKITPRO_ variables
-    AS_VAR_SET([DEVKITPRO_CPPFLAGS], ["-I$PORTLIBS_PPC_ROOT/include $DEVKITPRO_CPPFLAGS"])
-    AS_VAR_SET([DEVKITPRO_LIBS],     ["-L$PORTLIBS_PPC_ROOT/lib $DEVKITPRO_LIBS"])
+    AX_PREPEND_FLAG([DEVKITPRO_CPPFLAGS], [-I$PORTLIBS_PPC_ROOT/include])
+    AX_PREPEND_FLAG([DEVKITPRO_LIBS],     [-L$PORTLIBS_PPC_ROOT/lib])
 
 ])
