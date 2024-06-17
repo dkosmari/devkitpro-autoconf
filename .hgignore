@@ -10,3 +10,16 @@ config.status
 configure
 Makefile
 Makefile.in
+
+# these are needed for the examples
+*.elf
+*.o
+*.rpx
+.deps
+.dirstamp
+aminclude.am
+config.h
+config.h.in
+examples/**/m4/*.m4
+stamp-h1
+

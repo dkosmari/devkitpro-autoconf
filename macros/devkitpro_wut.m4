@@ -16,6 +16,7 @@
 # Output variables:
 #   - `DEVKITPRO_CFLAGS'
 #   - `DEVKITPRO_CPPFLAGS'
+#   - `DEVKITPRO_CXXFLAGS'
 #   - `DEVKITPRO_LDFLAGS'
 #   - `DEVKITPRO_LIBS'
 #   - `DEVKITPRO_RPL_LDFLAGS'
@@ -58,6 +59,10 @@ AC_DEFUN([DEVKITPRO_WUT_INIT],[
     AX_PREPEND_FLAG([-meabi],       [DEVKITPRO_CFLAGS])
     AX_PREPEND_FLAG([-mhard-float], [DEVKITPRO_CFLAGS])
 
+    AX_PREPEND_FLAG([-mcpu=750],    [DEVKITPRO_CXXFLAGS])
+    AX_PREPEND_FLAG([-meabi],       [DEVKITPRO_CXXFLAGS])
+    AX_PREPEND_FLAG([-mhard-float], [DEVKITPRO_CXXFLAGS])
+
     AX_PREPEND_FLAG([-lwut],                     [DEVKITPRO_LIBS])
     AX_PREPEND_FLAG([-L$WUT_ROOT/lib],           [DEVKITPRO_LIBS])
     AX_PREPEND_FLAG([-L$WUT_ROOT/usr/lib],       [DEVKITPRO_LIBS])
@@ -75,10 +80,8 @@ AC_DEFUN([DEVKITPRO_WUT_INIT],[
     AX_ADD_AM_MACRO([
 CLEANFILES ?=
 CLEANFILES += *.rpx *.rpl
-%.rpx: %.strip.elf
-	\$(ELF2RPL) \$< \$[@]
-%.rpl: %.strip.elf
-	\$(ELF2RPL) --rpl \$< \$[@]
+%.rpx: %.strip.elf; \$(ELF2RPL) \$< \$[@]
+%.rpl: %.strip.elf; \$(ELF2RPL) --rpl \$< \$[@]
 ])
 
 ])

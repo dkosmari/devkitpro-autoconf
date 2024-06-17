@@ -19,10 +19,6 @@
 #   - `DEVKITPRO_CPPFLAGS': prepends include paths for PPC portlibs.
 #   - `DEVKITPRO_LIBS': prepends library paths for PPC portlibs.
 #   - `PATH': appends `devkitPPC/bin' if necessary.
-#
-# The file `aminclude.am` is generated with extra Makefile rules. Add `@INC_AMINCLUDE@` to
-# the Makefile that needs them. Add `DISTCLEANFILES = $(AMINCLUDE)' to the toplevel
-# `Makefile.am` to remove this file during `make distclean'.
 
 AC_DEFUN([DEVKITPRO_PPC_INIT],[
 
@@ -56,13 +52,5 @@ AC_DEFUN([DEVKITPRO_PPC_INIT],[
 
     AX_PREPEND_FLAG([-I$PORTLIBS_PPC_ROOT/include], [DEVKITPRO_CPPFLAGS])
     AX_PREPEND_FLAG([-L$PORTLIBS_PPC_ROOT/lib], [DEVKITPRO_LIBS])
-
-    # custom Makefile rules
-    AX_ADD_AM_MACRO([
-CLEANFILES ?=
-CLEANFILES = *.strip.elf
-%.strip.elf: %.elf; \$(STRIP) -g \$< -o \$[@]
-])
-
 
 ])

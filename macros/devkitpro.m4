@@ -18,8 +18,14 @@
 #   - `DEVKITPRO': path to devkitPro.
 #   - `DEVKITPRO_CFLAGS': declared precious.
 #   - `DEVKITPRO_CPPFLAGS': declared precious.
+#   - `DEVKITPRO_CXXFLAGS': declared precious.
 #   - `DEVKITPRO_LDFLAGS': declared precious.
 #   - `DEVKITPRO_LIBS': declared precious.
+#
+# The file `aminclude.am` is generated with extra Makefile rules:
+#   - Add `@INC_AMINCLUDE@` to the Makefile that needs them.
+#   - Add `DISTCLEANFILES = $(AMINCLUDE)' to the toplevel `Makefile.am` to remove this
+#     file during `make distclean'.
 
 AC_DEFUN([DEVKITPRO_INIT],[
 
@@ -68,9 +74,17 @@ AC_DEFUN([DEVKITPRO_INIT],[
     AS_VAR_SET([PORTLIBS_ROOT], [$DEVKITPRO/portlibs])
 
 
-    AC_ARG_VAR([DEVKITPRO_CFLAGS], [C/C++ compilation flags for devkitPro])
+    AC_ARG_VAR([DEVKITPRO_CFLAGS], [C compilation flags for devkitPro])
     AC_ARG_VAR([DEVKITPRO_CPPFLAGS], [includes search path for devkitPro])
+    AC_ARG_VAR([DEVKITPRO_CXXFLAGS], [C++ compilation flags for devkitPro])
     AC_ARG_VAR([DEVKITPRO_LDFLAGS], [linker flags for devkitPro])
     AC_ARG_VAR([DEVKITPRO_LIBS], [libraries for devkitPro])
+
+    # custom Makefile rules
+    AX_ADD_AM_MACRO([
+CLEANFILES ?=
+CLEANFILES = *.strip.elf
+%.strip.elf: %.elf; \$(STRIP) -g \$< -o \$[@]
+])
 
 ])

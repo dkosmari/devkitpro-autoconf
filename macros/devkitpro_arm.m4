@@ -17,10 +17,6 @@
 # Output variables:
 #   - `DEVKITARM': path to devkitARM
 #   - `PATH': appends `devkitARM/bin' if necessary.
-#
-# The file `aminclude.am` is generated with extra Makefile rules. Add `@INC_AMINCLUDE@` to
-# the Makefile that needs them. Add `DISTCLEANFILES = $(AMINCLUDE)' to the toplevel
-# `Makefile.am` to remove this file during `make distclean'.
 
 AC_DEFUN([DEVKITPRO_ARM_INIT],[
 
@@ -48,15 +44,5 @@ AC_DEFUN([DEVKITPRO_ARM_INIT],[
               AC_SUBST([PATH])
           ],
           [AC_MSG_RESULT([yes])])
-
-
-    # custom Makefile rules
-    AX_ADD_AM_MACRO([
-CLEANFILES ?=
-CLEANFILES = *.strip.elf
-%.strip.elf: %.elf; \$(STRIP) -g \$< -o \$[@]
-])
-
-
 
 ])
