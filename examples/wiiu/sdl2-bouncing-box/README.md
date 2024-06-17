@@ -38,7 +38,7 @@ file. Both `all-local` and `run-local` recursive targets are used to build it.
 
 ### `src/Makefile.am`
 
-In [`src/Makefile.am`](src/Makefile) we use both `SDL2_CFLAGS` and `SDL2_LIBS`, in
+In [`src/Makefile.am`](src/Makefile.am) we use both `SDL2_CFLAGS` and `SDL2_LIBS`, in
 addition to the `DEVKITPRO_*` variables.
 
 We also want to build the `.rpx` for both `all-local` and `run-local` targets.
