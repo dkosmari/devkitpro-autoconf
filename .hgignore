@@ -15,6 +15,7 @@ Makefile.in
 *.elf
 *.o
 *.rpx
+*.wuhb
 .deps
 .dirstamp
 aminclude.am

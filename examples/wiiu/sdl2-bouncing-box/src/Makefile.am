@@ -17,27 +17,12 @@ noinst_PROGRAMS = sdl2-bouncing-box.elf
 sdl2_bouncing_box_elf_SOURCES = main.cpp
 
 
+# We want to create the .rpx on both `all' and `run' targets.
+
 RPX_TARGET = sdl2-bouncing-box.rpx
 
-$(RPX_TARGET): sdl2-bouncing-box.elf
-
 all-local: $(RPX_TARGET)
-
-
+run-local: $(RPX_TARGET)
 
 
 @INC_AMINCLUDE@
-
-
-run: $(RPX_TARGET)
-	WIILOAD=tcp:wiiu wiiload $<
-
-
-.PHONY: company
-
-company: compile_flags.txt
-
-compile_flags.txt: Makefile
-	printf "%s" "$(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS)" | xargs -n1 | sort -u > $(srcdir)/compile_flags.txt
-
-

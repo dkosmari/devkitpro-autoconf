@@ -11,11 +11,14 @@ DEVKITPRO_WUT_INIT
 
 AM_INIT_AUTOMAKE([foreign])
 
+# We're using the recursive `run' target to run it on the Wii U.
+AM_EXTRA_RECURSIVE_TARGETS([run])
+
 AC_PROG_CXX
 AC_LANG([C++])
 
 
-PKG_CHECK_MODULES([SDL2], [sdl2])
+PKG_CHECK_MODULES([SDL2], [sdl2 SDL2_mixer])
 
 
 AC_CONFIG_FILES([Makefile
