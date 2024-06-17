@@ -25,6 +25,24 @@ AC_DEFUN([DEVKITPRO_INIT],[
 
     AC_REQUIRE([AC_CANONICAL_HOST])
 
+    # Make sure macros that look up programs don't appear before this, since we may need
+    # to adjust PATH.
+    AC_BEFORE([$0], [AM_INIT_AUTOMAKE])
+    # specific program tests
+    AC_BEFORE([$0], [AC_PROG_CC])
+    AC_BEFORE([$0], [AC_PROG_CXX])
+    AC_BEFORE([$0], [AC_PROG_CPP])
+    AC_BEFORE([$0], [AC_PROG_RANLIB])
+    # automake also has these
+    AC_BEFORE([$0], [AM_PROG_AR])
+    AC_BEFORE([$0], [AM_PROG_AS])
+    # cross-compilation tool tests
+    AC_BEFORE([$0], [AC_CHECK_TOOL])
+    AC_BEFORE([$0], [AC_CHECK_TOOLS])
+    AC_BEFORE([$0], [AC_PATH_TARGET_TOOL])
+    AC_BEFORE([$0], [AC_PATH_TOOL])
+
+
     # make DEVKITPRO precious
     AC_ARG_VAR([DEVKITPRO], [path to devkitPro])
 

@@ -19,27 +19,14 @@
 #   - `DEVKITPRO_CPPFLAGS': prepends include paths for PPC portlibs.
 #   - `DEVKITPRO_LIBS': prepends library paths for PPC portlibs.
 #   - `PATH': appends `devkitPPC/bin' if necessary.
+#
+# The file `aminclude.am` is generated with extra Makefile rules. Add `@INC_AMINCLUDE@` to
+# the Makefile that needs them. Add `DISTCLEANFILES = $(AMINCLUDE)' to the toplevel
+# `Makefile.am` to remove this file during `make distclean'.
 
 AC_DEFUN([DEVKITPRO_PPC_INIT],[
 
     AC_REQUIRE([DEVKITPRO_INIT])
-
-    # Make sure macros that look up programs don't appear before this, since we may need
-    # to adjust PATH.
-    AC_BEFORE([$0], [AM_INIT_AUTOMAKE])
-    # specific program tests
-    AC_BEFORE([$0], [AC_PROG_CC])
-    AC_BEFORE([$0], [AC_PROG_CXX])
-    AC_BEFORE([$0], [AC_PROG_CPP])
-    AC_BEFORE([$0], [AC_PROG_RANLIB])
-    # automake also has these
-    AC_BEFORE([$0], [AM_PROG_AR])
-    AC_BEFORE([$0], [AM_PROG_AS])
-    # cross-compilation tool tests
-    AC_BEFORE([$0], [AC_CHECK_TOOL])
-    AC_BEFORE([$0], [AC_CHECK_TOOLS])
-    AC_BEFORE([$0], [AC_PATH_TARGET_TOOL])
-    AC_BEFORE([$0], [AC_PATH_TOOL])
 
 
     # Sanity check for host type.
@@ -74,8 +61,7 @@ AC_DEFUN([DEVKITPRO_PPC_INIT],[
     AX_ADD_AM_MACRO([
 CLEANFILES ?=
 CLEANFILES = *.strip.elf
-%.strip.elf: %.elf
-	\$(STRIP) -g \$< -o \$[@]
+%.strip.elf: %.elf; \$(STRIP) -g \$< -o \$[@]
 ])
 
 

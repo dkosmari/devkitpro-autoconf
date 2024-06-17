@@ -51,8 +51,7 @@ AC_DEFUN([WIIU_WUPS_INIT],[
     AX_ADD_AM_MACRO([
 CLEANFILES ?=
 CLEANFILES += *.wps
-%.wps: %.strip.elf
-	\$(ELF2RPL) \$< \$[@]
+%.wps: %.strip.elf; \$(ELF2RPL) \$< \$[@]
 ])
 
 ])
