@@ -10,4 +10,3 @@ dist_aclocal_DATA = \
 	wiiu-wums.m4 \
 	wiiu-wups.m4
 
-

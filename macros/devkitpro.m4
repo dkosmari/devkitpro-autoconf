@@ -47,7 +47,7 @@ AC_DEFUN([DEVKITPRO_INIT],[
     AC_BEFORE([$0], [AC_CHECK_TOOLS])
     AC_BEFORE([$0], [AC_PATH_TARGET_TOOL])
     AC_BEFORE([$0], [AC_PATH_TOOL])
-
+    AC_BEFORE([$0], [PKG_PROG_PKG_CONFIG])
 
     # make DEVKITPRO precious
     AC_ARG_VAR([DEVKITPRO], [path to devkitPro])

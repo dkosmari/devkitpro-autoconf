@@ -20,6 +20,6 @@ Makefile.in
 aminclude.am
 config.h
 config.h.in
+examples/**/compile_flags.txt
 examples/**/m4/*.m4
 stamp-h1
-

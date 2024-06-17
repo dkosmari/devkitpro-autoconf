@@ -29,6 +29,7 @@ AC_DEFUN([DEVKITPRO_WUT_INIT],[
     AC_REQUIRE([DEVKITPRO_PPC_INIT])
 
     # See if we can find elf2rpl in PATH; if not, append $DEVKITPRO/tools/bin to PATH
+    # TODO: we should actually check the contents of PATH
     AC_MSG_CHECKING([if $DEVKITPRO/tools/bin is in PATH])
     AS_IF([! which elf2rpl 1>/dev/null 2>/dev/null],
           [
@@ -43,6 +44,18 @@ AC_DEFUN([DEVKITPRO_WUT_INIT],[
 
     # set PORTLIBS_WIIU_ROOT
     AS_VAR_SET([PORTLIBS_WIIU_ROOT], [$PORTLIBS_ROOT/wiiu])
+
+    # See if we need to PORTLIBS_WIIU_ROOT/bin to PATH
+    # TODO: we should actually check the contents of PATH
+    AC_MSG_CHECKING([if $PORTLIBS_WIIU_ROOT/bin is in PATH])
+    AS_IF([! which powerpc-eabi-pkg-config 1>/dev/null 2>/dev/null],
+          [
+              AC_MSG_RESULT([no, will append to PATH])
+              AS_VAR_APPEND([PATH], [":$PORTLIBS_WIIU_ROOT/bin"])
+              AC_SUBST([PATH])
+          ],
+          [AC_MSG_RESULT([yes])])
+
 
     # set WUT_ROOT
     AS_VAR_SET([WUT_ROOT], [$DEVKITPRO/wut])

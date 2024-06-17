@@ -1,0 +1,9 @@
+EXTRA_DIST = \
+	bootstrap \
+	README.md
+
+
+SUBDIRS = src
+
+
+DISTCLEANFILES = $(AMINCLUDE)
