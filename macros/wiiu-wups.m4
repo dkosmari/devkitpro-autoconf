@@ -49,8 +49,11 @@ AC_DEFUN([WIIU_WUPS_INIT],[
 
     # custom Makefile rules
     AX_ADD_AM_MACRO([
-CLEANFILES ?=
-CLEANFILES += *.wps
+clean: clean-wps
+
+.PHONY: clean-wps
+clean-wps:; \$(RM) *.wps
+
 %.wps: %.strip.elf; \$(ELF2RPL) \$< \$[@]
 ])
 
