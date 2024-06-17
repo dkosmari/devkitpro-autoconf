@@ -15,7 +15,7 @@ Automake.
 
 ## Explanation
 
-The [bootstrap](bootstrap) script makes sure the macros are available without forcing them
+The [bootstrap](bootstrap) script makes sure the macros are available without needing them
 to be installed in the system.
 
 In [configure.ac](configure.ac), the only special line is the use of the
