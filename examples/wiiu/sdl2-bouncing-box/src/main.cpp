@@ -1,8 +1,11 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
 
+#include <sysapp/launch.h>
 #include <whb/log.h>
 #include <whb/log_udp.h>
+
+#include "show.hpp"
 
 
 int main()
@@ -78,22 +81,33 @@ int main()
         while (running) {
             SDL_Event e;
             while (SDL_PollEvent(&e)) {
+                show(e);
                 switch (e.type) {
                 case SDL_QUIT:
+                    WHBLogPrintf("got SDL_QUIT\n");
                     running = false;
+                    //goto out_of_main_loop;
                     break;
                 case SDL_CONTROLLERBUTTONDOWN:
+#if 0
                     switch (e.cbutton.button) {
                     case SDL_CONTROLLER_BUTTON_B:
                     case SDL_CONTROLLER_BUTTON_START:
-                        running = false;
+                        // WHBLogPrintf("sending out SDL_QUIT\n");
+                        // SDL_Event quit_event{};
+                        // quit_event.quit.type = SDL_QUIT;
+                        // quit_event.quit.timestamp = SDL_GetTicks();
+                        // SDL_PushEvent(&quit_event);
+                        SYSLaunchMenu();
                         break;
                     }
+#endif
                     break;
                 case SDL_CONTROLLERDEVICEADDED:
                     {
                         auto c = SDL_GameControllerOpen(e.cdevice.which);
-                        WHBLogPrintf("Added controller: %s\n",
+                        WHBLogPrintf("Added controller %d: %s\n",
+                                     e.cdevice.which,
                                      SDL_GameControllerName(c));
                     }
                     break;
@@ -140,6 +154,7 @@ int main()
         }
     }
 
+ // out_of_main_loop:
     WHBLogPrintf("Shutting down\n");
 
     Mix_FreeChunk(bonk);

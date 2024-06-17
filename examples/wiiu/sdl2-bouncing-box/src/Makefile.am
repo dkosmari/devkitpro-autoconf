@@ -7,14 +7,15 @@ AM_CXXFLAGS = $(DEVKITPRO_CXXFLAGS)
 AM_LDFLAGS = $(DEVKITPRO_LDFLAGS)
 
 LIBS = \
-	$(DEVKITPRO_LIBS) \
-	$(SDL2_LIBS)
-
+	$(SDL2_LIBS) \
+	$(DEVKITPRO_LIBS)
 
 
 noinst_PROGRAMS = sdl2-bouncing-box.elf
 
-sdl2_bouncing_box_elf_SOURCES = main.cpp
+sdl2_bouncing_box_elf_SOURCES = \
+	main.cpp \
+	show.cpp show.hpp
 
 
 # We want to create the .rpx on both `all' and `run' targets.
