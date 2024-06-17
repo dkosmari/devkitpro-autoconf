@@ -3,7 +3,6 @@
 
 #include <whb/log.h>
 #include <whb/log_udp.h>
-#include <whb/file.h>
 
 
 int main()
@@ -22,7 +21,7 @@ int main()
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_AUDIO) < 0) {
         WHBLogPrintf("Failed to init SDL: %s\n", SDL_GetError());
         status = -1;
-        goto error_final;
+        goto error_stop_log_udp;
     }
 
     Mix_Init(0);
@@ -30,7 +29,7 @@ int main()
     if (Mix_OpenAudio(48000, AUDIO_S16SYS, 2, 4096) == -1) {
         WHBLogPrintf("Failed to open audio: %s\n", SDL_GetError());
         status = -2;
-        goto error_quit;
+        goto error_quit_sdl;
     }
 
 
@@ -41,7 +40,7 @@ int main()
     if (!win) {
         WHBLogPrintf("Failed to create window: %s\n", SDL_GetError());
         status = -3;
-        goto error_audio;
+        goto error_close_audio;
     }
 
     ren = SDL_CreateRenderer(win, -1,
@@ -49,14 +48,14 @@ int main()
     if (!ren) {
         WHBLogPrintf("Failed to create renderer: %s\n", SDL_GetError());
         status = -4;
-        goto error_win;
+        goto error_destroy_window;
     }
 
     // Load asset from the .wuhb
     bonk = Mix_LoadWAV("/vol/content/bonk.wav");
     if (!bonk) {
         WHBLogPrintf("error loading bonk.wav: %s\n", Mix_GetError());
-        goto error_bonk;
+        goto error_destroy_renderer;
     }
 
 
@@ -144,18 +143,16 @@ int main()
     WHBLogPrintf("Shutting down\n");
 
     Mix_FreeChunk(bonk);
- error_bonk:
-    WHBDeInitFileSystem();
- error_fs:
+ error_destroy_renderer:
     SDL_DestroyRenderer(ren);
- error_win:
+ error_destroy_window:
     SDL_DestroyWindow(win);
- error_audio:
+ error_close_audio:
     Mix_CloseAudio();
- error_quit:
+ error_quit_sdl:
     Mix_Quit();
     SDL_Quit();
- error_final:
+ error_stop_log_udp:
     WHBLogUdpDeinit();
 
     return status;
