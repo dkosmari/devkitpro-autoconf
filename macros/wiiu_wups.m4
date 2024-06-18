@@ -1,5 +1,5 @@
 # -*- mode: autoconf -*-
-# wiiu-wups.m4 - Macros to handle Wii U Plugin System
+# wiiu_wups.m4 - Macros to handle Wii U Plugin System
 
 # Copyright (c) 2024 Daniel K. O. <dkosmari>
 #

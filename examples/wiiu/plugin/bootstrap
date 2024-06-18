@@ -1,0 +1,5 @@
+#!/bin/sh -x
+rm -rf ./m4
+mkdir -p ./m4
+ln -rsv ../../../macros/*.m4 ./m4/
+exec autoreconf --install --symlink "$@"

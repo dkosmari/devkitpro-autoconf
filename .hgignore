@@ -15,6 +15,7 @@ Makefile.in
 *.elf
 *.o
 *.rpx
+*.wps
 *.wuhb
 .deps
 .dirstamp

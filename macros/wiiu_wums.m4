@@ -1,5 +1,5 @@
 # -*- mode: autoconf -*-
-# wiiu-wums.m4 - Macros to handle Wii U Module System.
+# wiiu_wums.m4 - Macros to handle Wii U Module System.
 
 # Copyright (c) 2024 Daniel K. O. <dkosmari>
 #
