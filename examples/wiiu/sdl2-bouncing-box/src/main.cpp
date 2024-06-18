@@ -78,6 +78,7 @@ int main()
         SDL_RenderSetLogicalSize(ren, screen_width, screen_height);
 
         bool running = true;
+        bool quitting = false;
         while (running) {
             SDL_Event e;
             while (SDL_PollEvent(&e)) {
@@ -86,6 +87,7 @@ int main()
                 case SDL_QUIT:
                     WHBLogPrintf("got SDL_QUIT\n");
                     running = false;
+                    quitting = true;
                     //goto out_of_main_loop;
                     break;
                 case SDL_CONTROLLERBUTTONDOWN:
@@ -93,7 +95,10 @@ int main()
                     switch (e.cbutton.button) {
                     case SDL_CONTROLLER_BUTTON_B:
                     case SDL_CONTROLLER_BUTTON_START:
-                        SYSLaunchMenu(); // causes a SDL_QUIT to be sent.
+                        if (!quitting) {
+                            SYSLaunchMenu(); // causes a SDL_QUIT to be sent.
+                            quitting = true;
+                        }
                         break;
                     }
 #endif
