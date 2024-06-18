@@ -56,10 +56,8 @@ int main()
 
     // Load asset from the .wuhb
     bonk = Mix_LoadWAV("/vol/content/bonk.wav");
-    if (!bonk) {
-        WHBLogPrintf("error loading bonk.wav: %s\n", Mix_GetError());
-        goto error_destroy_renderer;
-    }
+    if (!bonk)
+        WHBLogPrintf("Failed to load bonk.wav: %s\n", Mix_GetError());
 
 
     {
@@ -78,20 +76,18 @@ int main()
         SDL_RenderSetLogicalSize(ren, screen_width, screen_height);
 
         bool running = true;
-        bool quitting = false;
+        bool quitting = false; // avoid requesting another quit event.
         while (running) {
             SDL_Event e;
             while (SDL_PollEvent(&e)) {
                 show(e);
                 switch (e.type) {
                 case SDL_QUIT:
-                    WHBLogPrintf("got SDL_QUIT\n");
+                    WHBLogPrintf("Handling SDL_QUIT\n");
                     running = false;
                     quitting = true;
-                    //goto out_of_main_loop;
                     break;
                 case SDL_CONTROLLERBUTTONDOWN:
-#if 1
                     switch (e.cbutton.button) {
                     case SDL_CONTROLLER_BUTTON_B:
                     case SDL_CONTROLLER_BUTTON_START:
@@ -101,7 +97,6 @@ int main()
                         }
                         break;
                     }
-#endif
                     break;
                 case SDL_CONTROLLERDEVICEADDED:
                     {
@@ -136,7 +131,7 @@ int main()
                 bounced = true;
             }
 
-            if (bounced)
+            if (bounced && bonk)
                 Mix_PlayChannel(-1, bonk, 0);
 
             // TODO: add some randomness to vx/vy after every bounce
@@ -154,11 +149,9 @@ int main()
         }
     }
 
- // out_of_main_loop:
     WHBLogPrintf("Shutting down\n");
 
-    Mix_FreeChunk(bonk);
- error_destroy_renderer:
+    Mix_FreeChunk(bonk); // bonk might be null, but it's harmless
     SDL_DestroyRenderer(ren);
  error_destroy_window:
     SDL_DestroyWindow(win);
