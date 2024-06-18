@@ -89,16 +89,11 @@ int main()
                     //goto out_of_main_loop;
                     break;
                 case SDL_CONTROLLERBUTTONDOWN:
-#if 0
+#if 1
                     switch (e.cbutton.button) {
                     case SDL_CONTROLLER_BUTTON_B:
                     case SDL_CONTROLLER_BUTTON_START:
-                        // WHBLogPrintf("sending out SDL_QUIT\n");
-                        // SDL_Event quit_event{};
-                        // quit_event.quit.type = SDL_QUIT;
-                        // quit_event.quit.timestamp = SDL_GetTicks();
-                        // SDL_PushEvent(&quit_event);
-                        SYSLaunchMenu();
+                        SYSLaunchMenu(); // causes a SDL_QUIT to be sent.
                         break;
                     }
 #endif
