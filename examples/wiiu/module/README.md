@@ -29,7 +29,7 @@ them to be installed in the system.
 In the [`configure.ac`](configure.ac) we use the `WIIU_WUMS_MODULE_INIT` macro. This will
 adjust the `DEVKITPRO_*` variable to generate WUMS modules.
 
-### Makefile.am
+### `Makefile.am`
 
 The [`Makefile.am`](Makefile.am) starts with using the `DEVKITPRO_*` variables to adjust
 all the compiler and linker flags.

@@ -36,7 +36,7 @@ To use of the `libnotifications` component of WUMS, we use the
 `WIIU_WUMS_CHECK_LIB_NOTIFICATIONS` macro. It will ensure that `libnotifications` is
 present, and add it to `DEVKITPRO_LIBS`.
 
-### Makefile.am
+### `Makefile.am`
 
 The [`Makefile.am`](Makefile.am) starts with using the `DEVKITPRO_*` variables to adjust
 all the compiler and linker flags.
