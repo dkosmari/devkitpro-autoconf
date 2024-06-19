@@ -37,7 +37,7 @@ AC_DEFUN([WIIU_WUPS_INIT],[
     AX_VAR_PUSHVALUE([CPPFLAGS], [$DEVKITPRO_CPPFLAGS $CPPFLAGS])
     AX_VAR_PUSHVALUE([LIBS], [$DEVKITPRO_LIBS $LIBS])
 
-    AX_CHECK_LIBRARY([WIIU_WUPS_LIB],
+    AX_CHECK_LIBRARY([WIIU_WUPS_TEST],
                      [wups.h],
                      [wups],
                      [AX_PREPEND_FLAG([-lwups], [DEVKITPRO_LIBS])],

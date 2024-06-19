@@ -26,7 +26,7 @@ DISTCLEANFILES = $(AMINCLUDE)
 
 # Use `make install' to send it straight to the Aroma plugins folder through ftpiiu
 install-exec-local: $(PLUGIN_FILE)
-	curl --upload-file $< ftp://wiiu:/fs/vol/external01/wiiu/environments/aroma/plugins/
+	curl "ftp://wiiu:/fs/vol/external01/wiiu/environments/aroma/plugins/" --upload-file $<
 
 uninstall-local:
-	curl ftp://wiiu --quote "DELE /fs/vol/external01/wiiu/environments/aroma/plugins/$(PLUGIN_FILE)"
+	curl "ftp://wiiu" --quote "DELE /fs/vol/external01/wiiu/environments/aroma/plugins/$(PLUGIN_FILE)"

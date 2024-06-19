@@ -29,8 +29,8 @@ them to be installed in the system.
 
 ### `configure.ac`
 
-In the [`configure.ac`](configure.ac), we need both WUPS and WUMS environments initialized, using the macros
-`WIIU_WUPS_INIT` and `WIIU_WUMS_INIT`.
+In the [`configure.ac`](configure.ac), we need both WUPS and WUMS environments
+initialized, using the macros `WIIU_WUPS_INIT` and `WIIU_WUMS_INIT`.
 
 To use of the `libnotifications` component of WUMS, we use the
 `WIIU_WUMS_CHECK_LIB_NOTIFICATIONS` macro. It will ensure that `libnotifications` is
@@ -42,8 +42,8 @@ The [`Makefile.am`](Makefile.am) starts with using the `DEVKITPRO_*` variables t
 all the compiler and linker flags.
 
 Despite the plugin being a library (no `main()` function) we still use the `PROGRAMS`
-primary to create a `.elf` file, and then we convert it to a `.wps` file in the
-`all-local` target. The `noinst_` prefix ensures it is not installed on `make install`.
+primary to create a `.elf` file, and then convert it to a `.wps` file in the `all-local`
+target. The `noinst_` prefix ensures the `.elf` is not installed on `make install`.
 
 To import the extra Makefile rules, we add `@INC_AMINCLUDE@`.
 
