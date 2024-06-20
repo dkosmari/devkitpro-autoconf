@@ -12,6 +12,7 @@ Makefile
 Makefile.in
 
 # these are needed for the examples
+*.dol
 *.elf
 *.o
 *.rpx

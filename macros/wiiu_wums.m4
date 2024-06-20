@@ -124,10 +124,8 @@ AC_DEFUN([WIIU_WUMS_MODULE_INIT],[
     # custom Makefile rules
     AX_ADD_AM_MACRO([
 clean: clean-wms
-
 .PHONY: clean-wms
 clean-wms:; \$(RM) *.wms
-
 %.wms: %.strip.elf; \$(ELF2RPL) \$< \$[@]
 ])
 

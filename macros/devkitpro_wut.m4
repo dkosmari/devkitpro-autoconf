@@ -92,10 +92,8 @@ AC_DEFUN([DEVKITPRO_WUT_INIT],[
     # custom Makefile rules
     AX_ADD_AM_MACRO([
 clean: clean-rpx
-
 .PHONY: clean-rpx
 clean-rpx:; \$(RM) *.rpx *.rpl
-
 %.rpx: %.strip.elf; \$(ELF2RPL) \$< \$[@]
 %.rpl: %.strip.elf; \$(ELF2RPL) --rpl \$< \$[@]
 ])

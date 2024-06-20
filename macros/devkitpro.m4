@@ -83,10 +83,8 @@ AC_DEFUN([DEVKITPRO_INIT],[
     # custom Makefile rules
     AX_ADD_AM_MACRO([
 clean: clean-strip-elf
-
 .PHONY: clean-strip-elf
 clean-strip-elf:; \$(RM) *.strip.elf
-
 %.strip.elf: %.elf; \$(STRIP) -g \$< -o \$[@]
 ])
 

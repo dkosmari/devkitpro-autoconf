@@ -15,12 +15,18 @@ Automake.
 
 ## Explanation
 
-The [bootstrap](bootstrap) script makes sure the macros are available without needing them
+### [`bootstrap`](bootstrap)
+
+The bootstrap script makes sure the macros are available without needing them
 to be installed in the system.
 
-In [configure.ac](configure.ac), the only special line is the use of the
+### [`configure.ac`](configure.ac)
+
+In `configure.ac`, the only special line is the use of the
 `DEVKITPRO_WUT_INIT` macro. It must be called before `AM_INIT_AUTOMAKE`; there's an
 ordering check to make sure you don't call them out of order.
+
+### [`Makefile.am`](Makefile.am)
 
 The `Makefile.am` is the main focus:
 
