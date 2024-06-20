@@ -6,11 +6,7 @@ EXTRA_DIST = \
 AM_CPPFLAGS = $(DEVKITPRO_CPPFLAGS)
 AM_CXXFLAGS = $(DEVKITPRO_CXXFLAGS)
 AM_LDFLAGS = $(DEVKITPRO_LDFLAGS)
-LIBS = \
-	-lwiiuse \
-	-lbte \
-	-logc \
-	$(DEVKITPRO_LIBS)
+LIBS = $(DEVKITPRO_LIBS)
 
 # We build a .elf and then convert it to .dol
 DOL_FILE = hello-world.dol

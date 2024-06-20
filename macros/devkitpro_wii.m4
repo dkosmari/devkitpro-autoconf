@@ -43,7 +43,7 @@ AC_DEFUN([DEVKITPRO_WII_INIT], [
     AC_MSG_CHECKING([if $PORTLIBS_WII_ROOT/bin is in PATH])
     AS_IF([! which powerpc-eabi-pkg-config 1>/dev/null 2>/dev/null],
           [
-              AC_MSG_RESULT([no, will append to PATH])
+              AC_MSG_RESULT([no, will a ppend to PATH])
               AS_VAR_APPEND([PATH], [":$PORTLIBS_WII_ROOT/bin"])
               AC_SUBST([PATH])
           ],
@@ -65,9 +65,21 @@ AC_DEFUN([DEVKITPRO_WII_INIT], [
     AX_PREPEND_FLAG([-mrvl],        [DEVKITPRO_CXXFLAGS])
     AX_PREPEND_FLAG([-mhard-float], [DEVKITPRO_CXXFLAGS])
 
-    dnl AX_PREPEND_FLAG([-logc],                    [DEVKITPRO_LIBS])
-    dnl AX_PREPEND_FLAG([-lwiiuse],                 [DEVKITPRO_LIBS])
+                            
+    AX_PREPEND_FLAG([-logc],         [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-laesnd],       [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-lasnd],        [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-lbte],         [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-ldb],          [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-ldi],          [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-liso9660],     [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-lmad],         [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-lmodplay],     [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-ltinysmb],     [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-lwiikeyboard], [DEVKITPRO_LIBS])
+    AX_PREPEND_FLAG([-lwiiuse],      [DEVKITPRO_LIBS])
     AX_PREPEND_FLAG([-L$LIBOGC_ROOT/lib/wii],   [DEVKITPRO_LIBS])
+
     AX_PREPEND_FLAG([-L$PORTLIBS_WII_ROOT/lib], [DEVKITPRO_LIBS])
 
 
