@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.71])
+AC_PREREQ([2.69])
 AC_INIT([dummy-plugin], [1.0])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_MACRO_DIR([m4])
@@ -16,9 +16,7 @@ AC_PROG_CXX
 
 AC_LANG([C++])
 
-
-WIIU_WUMS_CHECK_LIB_NOTIFICATIONS
-
+WIIU_WUMS_CHECK_LIBNOTIFICATIONS
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

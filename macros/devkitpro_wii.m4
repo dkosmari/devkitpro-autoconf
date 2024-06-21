@@ -11,7 +11,18 @@
 
 # DEVKITPRO_WII_INIT
 # ------------------
+#
 # This macro adjusts the environment for Wii homebrew.
+#
+# Output variables:
+#   - `DEVKITPRO_CFLAGS'
+#   - `DEVKITPRO_CPPFLAGS'
+#   - `DEVKITPRO_CXXFLAGS'
+#   - `DEVKITPRO_LDFLAGS'
+#   - `DEVKITPRO_LIBS'
+#   - `ELF2DOL'
+#   - `GXTEXCONV'
+#   - `PATH': appends `DEVKITPRO/tools/bin' if necessary.
 
 AC_DEFUN([DEVKITPRO_WII_INIT], [
 
@@ -28,7 +39,7 @@ AC_DEFUN([DEVKITPRO_WII_INIT], [
           [AC_MSG_RESULT([yes])])
 
     AC_CHECK_PROGS([ELF2DOL], [elf2dol])
-    AC_CHECK_PROGS([GXTEXCONF], [gxtexconv])
+    AC_CHECK_PROGS([GXTEXCONV], [gxtexconv])
 
 
     # set LIBOGC_ROOT
@@ -96,4 +107,58 @@ clean-tpl:; \$(RM) *.tpl
 %.tpl: %.scf; \$(GXTEXCONV) -s \$< -o \$[@]
 ])
 
+])
+
+
+# DEVKITPRO_WII_CHECK_LIBFAT
+# --------------------------
+#
+# This macro checks for the presence of libfat-ogc.
+#
+# Output variables:
+#   - `DEVKITPRO_LIBS'
+
+AC_DEFUN([DEVKITPRO_WII_CHECK_LIBFAT], [
+
+    AC_REQUIRE([DEVKITPRO_WII_INIT])
+
+    # Note: libfat-ogc is installed inside LIBOGC_ROOT already.
+    AX_VAR_PUSHVALUE([CPPFLAGS], [$DEVKITPRO_CPPFLAGS $CPPFLAGS])
+    AX_VAR_PUSHVALUE([LIBS], [$DEVKITPRO_LIBS $LIBS])
+
+    AX_CHECK_LIBRARY([DEVKITPRO_WII_LIBFAT],
+                     [fat.h],
+                     [fat],
+                     [AX_PREPEND_FLAG([-lfat], [DEVKITPRO_LIBS])],
+                     [AC_MSG_ERROR([libfat-ogc not found in $LIBOGC_ROOT; install the package with "dkp-pacman -S libfat-ogc"])])
+
+    AX_VAR_POPVALUE([LIBS])
+    AX_VAR_POPVALUE([CPPFLAGS])
+])
+
+
+# DEVKITPRO_WII_CHECK_LIBGXFLUX
+# -----------------------------
+#
+# This macro checks for the presence of libgxflux.
+#
+# Output variables:
+#   - `DEVKITPRO_LIBS'
+
+AC_DEFUN([DEVKITPRO_WII_CHECK_LIBGXFLUX], [
+
+    AC_REQUIRE([DEVKITPRO_WII_INIT])
+
+    # Note: libgxflux is installed inside LIBOGC_ROOT already.
+    AX_VAR_PUSHVALUE([CPPFLAGS], [$DEVKITPRO_CPPFLAGS $CPPFLAGS])
+    AX_VAR_PUSHVALUE([LIBS], [$DEVKITPRO_LIBS $LIBS])
+
+    AX_CHECK_LIBRARY([DEVKITPRO_WII_LIBGXFLUX],
+                     [gxflux/gfx.h],
+                     [-lgxflux],
+                     [AX_PREPEND_FLAG([-lgxflux], [DEVKITPRO_LIBS])],
+                     [AC_MSG_ERROR([libgxflux not found in $LIBOGC_ROOT; install the package with "dkp-pacman -S libgxflux"])])
+
+    AX_VAR_POPVALUE([LIBS])
+    AX_VAR_POPVALUE([CPPFLAGS])
 ])

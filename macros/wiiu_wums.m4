@@ -34,22 +34,22 @@ AC_DEFUN([WIIU_WUMS_INIT],[
 ])
 
 
-# WIIU_WUMS_CHECK_LIB_CURLWRAPPER
-# -------------------------------
+# WIIU_WUMS_CHECK_LIBCURLWRAPPER
+# ------------------------------
 #
 # Checks for presence of libcurlwrapper.
 #
 # Output variables:
 #   - `DEVKITPRO_LIBS'
 
-AC_DEFUN([WIIU_WUMS_CHECK_LIB_CURLWRAPPER],[
+AC_DEFUN([WIIU_WUMS_CHECK_LIBCURLWRAPPER],[
 
     AC_REQUIRE([WIIU_WUMS_INIT])
 
     AX_VAR_PUSHVALUE([CPPFLAGS], [$DEVKITPRO_CPPFLAGS $CPPFLAGS])
     AX_VAR_PUSHVALUE([LIBS], [$DEVKITPRO_LIBS $LIBS])
 
-    AX_CHECK_LIBRARY([WIIU_WUMS_LIB_CURLWRAPPER],
+    AX_CHECK_LIBRARY([WIIU_WUMS_LIBCURLWRAPPER],
                      [curl/curl.h],
                      [curlwrapper],
                      [AX_PREPEND_FLAG([-lcurlwrapper], [DEVKITPRO_LIBS])],
@@ -60,22 +60,22 @@ AC_DEFUN([WIIU_WUMS_CHECK_LIB_CURLWRAPPER],[
 ])
 
 
-# WIIU_WUMS_CHECK_LIB_NOTIFICATIONS
-# ---------------------------------
+# WIIU_WUMS_CHECK_LIBNOTIFICATIONS
+# --------------------------------
 #
 # Checks for presence of libnotifications.
 #
 # Output variables:
 #   - `DEVKITPRO_LIBS'
 
-AC_DEFUN([WIIU_WUMS_CHECK_LIB_NOTIFICATIONS],[
+AC_DEFUN([WIIU_WUMS_CHECK_LIBNOTIFICATIONS],[
 
     AC_REQUIRE([WIIU_WUMS_INIT])
 
     AX_VAR_PUSHVALUE([CPPFLAGS], [$DEVKITPRO_CPPFLAGS $CPPFLAGS])
     AX_VAR_PUSHVALUE([LIBS], [$DEVKITPRO_LIBS $LIBS])
 
-    AX_CHECK_LIBRARY([WIIU_WUMS_LIB_NOTIFICATIONS],
+    AX_CHECK_LIBRARY([WIIU_WUMS_LIBNOTIFICATIONS],
                      [notifications/notifications.h],
                      [notifications],
                      [AX_PREPEND_FLAG([-lnotifications], [DEVKITPRO_LIBS])],

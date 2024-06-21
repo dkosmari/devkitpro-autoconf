@@ -33,7 +33,7 @@ In the [`configure.ac`](configure.ac), we need both WUPS and WUMS environments
 initialized, using the macros `WIIU_WUPS_INIT` and `WIIU_WUMS_INIT`.
 
 To use of the `libnotifications` component of WUMS, we use the
-`WIIU_WUMS_CHECK_LIB_NOTIFICATIONS` macro. It will ensure that `libnotifications` is
+`WIIU_WUMS_CHECK_LIBNOTIFICATIONS` macro. It will ensure that `libnotifications` is
 present, and add it to `DEVKITPRO_LIBS`.
 
 ### `Makefile.am`

@@ -12,6 +12,7 @@ AM_LDFLAGS = $(DEVKITPRO_LDFLAGS)
 LIBS = $(DEVKITPRO_LIBS)
 
 
+RPX_FILE = hello-world.rpx
 # Tip: use noinst_PROGRAMS instead of bin_PROGRAMS, to not have it on `make install'.
 noinst_PROGRAMS = hello-world.elf
 
@@ -19,7 +20,7 @@ hello_world_elf_SOURCES = src/main.cpp
 
 
 # To generate a .rpx, we need to hook it into the `all' rule.
-all-local: hello-world.rpx
+all-local: $(RPX_FILE)
 
 
 # Some custom Makefile rules are created in ${top_builddir}/$(AMINCLUDE). This is how we
@@ -31,10 +32,11 @@ all-local: hello-world.rpx
 # If we wish to delete that file during `make distclean', we must tell Automake to clean
 # it:
 DISTCLEANFILES = $(AMINCLUDE)
-# Note: we do this only on the toplevel Makefile.
+# Note: we do this only in the toplevel Makefile.
 
 
 # Use `make run' to run it on the Wii U using wiiload (assume the host name is `wiiu')
-run: hello-world.rpx
+.PHONY: run
+run: $(RPX_FILE)
 	WIILOAD=tcp:wiiu wiiload $<
 

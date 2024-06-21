@@ -1,3 +1,7 @@
+EXTRA_DIST = \
+	bootstrap \
+	README.md
+
 # Make sure to use all of DEVKITPRO_ flag variables.
 AM_CPPFLAGS = $(DEVKITPRO_CPPFLAGS)
 AM_CXXFLAGS = $(DEVKITPRO_CXXFLAGS)
