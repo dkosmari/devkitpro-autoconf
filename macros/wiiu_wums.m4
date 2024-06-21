@@ -46,17 +46,11 @@ AC_DEFUN([WIIU_WUMS_CHECK_LIBCURLWRAPPER],[
 
     AC_REQUIRE([WIIU_WUMS_INIT])
 
-    AX_VAR_PUSHVALUE([CPPFLAGS], [$DEVKITPRO_CPPFLAGS $CPPFLAGS])
-    AX_VAR_PUSHVALUE([LIBS], [$DEVKITPRO_LIBS $LIBS])
+    DEVKITPRO_CHECK_LIBRARY([WIIU_WUMS_LIBCURLWRAPPER],
+                            [curl/curl.h],
+                            [curlwrapper],
+                            [libcurlwrapper not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libcurlwrapper])
 
-    AX_CHECK_LIBRARY([WIIU_WUMS_LIBCURLWRAPPER],
-                     [curl/curl.h],
-                     [curlwrapper],
-                     [AX_PREPEND_FLAG([-lcurlwrapper], [DEVKITPRO_LIBS])],
-                     [AC_MSG_ERROR([libcurlwrapper not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libcurlwrapper])])
-
-    AX_VAR_POPVALUE([LIBS])
-    AX_VAR_POPVALUE([CPPFLAGS])
 ])
 
 
@@ -72,17 +66,10 @@ AC_DEFUN([WIIU_WUMS_CHECK_LIBNOTIFICATIONS],[
 
     AC_REQUIRE([WIIU_WUMS_INIT])
 
-    AX_VAR_PUSHVALUE([CPPFLAGS], [$DEVKITPRO_CPPFLAGS $CPPFLAGS])
-    AX_VAR_PUSHVALUE([LIBS], [$DEVKITPRO_LIBS $LIBS])
-
-    AX_CHECK_LIBRARY([WIIU_WUMS_LIBNOTIFICATIONS],
-                     [notifications/notifications.h],
-                     [notifications],
-                     [AX_PREPEND_FLAG([-lnotifications], [DEVKITPRO_LIBS])],
-                     [AC_MSG_ERROR([libnotifications not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libnotifications])])
-
-    AX_VAR_POPVALUE([LIBS])
-    AX_VAR_POPVALUE([CPPFLAGS])
+    DEVKITPRO_CHECK_LIBRARY([WIIU_WUMS_LIBNOTIFICATIONS],
+                            [notifications/notifications.h],
+                            [notifications],
+                            [libnotifications not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libnotifications])
 
 ])
 
@@ -108,17 +95,10 @@ AC_DEFUN([WIIU_WUMS_MODULE_INIT],[
     AX_PREPEND_FLAG([-L$WIIU_WUMS_ROOT/lib], [DEVKITPRO_LIBS])
 
     # do a compilation test to check for header and lib
-    AX_VAR_PUSHVALUE([CPPFLAGS], [$DEVKITPRO_CPPFLAGS $CPPFLAGS])
-    AX_VAR_PUSHVALUE([LIBS], [$DEVKITPRO_LIBS $LIBS])
-
-    AX_CHECK_LIBRARY([WIIU_WUMS_MODULE_TEST],
-                     [wums.h],
-                     [wums],
-                     [AX_PREPEND_FLAG([-lwums], [DEVKITPRO_LIBS])],
-                     [AC_MSG_ERROR([WUMS not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/WiiUModuleSystem])])
-
-    AX_VAR_POPVALUE([LIBS])
-    AX_VAR_POPVALUE([CPPFLAGS])
+    DEVKITPRO_CHECK_LIBRARY([WIIU_WUMS_MODULE_TEST],
+                            [wums.h],
+                            [wums],
+                            [WUMS not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/WiiUModuleSystem])
 
 
     # custom Makefile rules

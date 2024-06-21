@@ -22,8 +22,11 @@ to be installed in the system.
 
 ### [`configure.ac`](configure.ac)
 
-In `configure.ac`, the only special line is the use of the `DEVKITPRO_WII_INIT` macro,
-that must appear before `AM_INIT_AUTOMAKE`.
+We use the `DEVKITPRO_WII_INIT` macro, that must appear before `AM_INIT_AUTOMAKE`.
+
+A third-party library, `libgxflux`, is also used, with the `DEVKITPRO_WII_CHECK_LIBGXFLUX`
+macro.
+
 
 ### [`Makefile.am`](Makefile.am)
 

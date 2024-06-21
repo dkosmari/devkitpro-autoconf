@@ -20,7 +20,7 @@ all-local: $(DOL_FILE)
 # Convenience target to run it on the console.
 .PHONY: run
 run: $(DOL_FILE)
-	WIILOAD=tcp:wii wiiload $<
+	WIILOAD=/dev/ttyUSB0 wiiload $<
 
 
 # Import the extra Makefile rules.

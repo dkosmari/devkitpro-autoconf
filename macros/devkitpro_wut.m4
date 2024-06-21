@@ -76,12 +76,20 @@ AC_DEFUN([DEVKITPRO_WUT_INIT],[
     AX_PREPEND_FLAG([-meabi],       [DEVKITPRO_CXXFLAGS])
     AX_PREPEND_FLAG([-mhard-float], [DEVKITPRO_CXXFLAGS])
 
-    AX_PREPEND_FLAG([-lwut],                     [DEVKITPRO_LIBS])
     AX_PREPEND_FLAG([-L$WUT_ROOT/lib],           [DEVKITPRO_LIBS])
     AX_PREPEND_FLAG([-L$WUT_ROOT/usr/lib],       [DEVKITPRO_LIBS])
     AX_PREPEND_FLAG([-L$PORTLIBS_WIIU_ROOT/lib], [DEVKITPRO_LIBS])
 
     AX_PREPEND_FLAG([-specs=$WUT_ROOT/share/wut.specs], [DEVKITPRO_LDFLAGS])
+
+    DEVKITPRO_PUSH_FLAGS
+    AX_CHECK_LIBRARY([DEVKITPRO_WUT_LIBWUT],
+                     [wut.h],
+                     [wut],
+                     [AX_PREPEND_FLAG([-lwut], [DEVKITPRO_LIBS])],
+                     [AC_MSG_ERROR([wut not found in $DEVKITPRO; install the package with "dkp-pacman -S wut"])])
+    DEVKITPRO_POP_FLAGS
+
 
     # set DEVKITPRO_RPL_LDFLAGS
     AS_VAR_SET([DEVKITPRO_RPL_LDFLAGS],

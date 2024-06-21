@@ -3,28 +3,21 @@
 #include <gccore.h>
 #include <wiiuse/wpad.h>
 
+#include <gxflux/gfx.h>
+#include <gxflux/gfx_con.h>
+
 
 int main()
 {
+    // copy stdout to gecko USB
+    SYS_STDIO_Report(true);
+
     VIDEO_Init();
     WPAD_Init();
 
-    GXRModeObj* mode = VIDEO_GetPreferredMode(nullptr);
-    void* fb = MEM_K0_TO_K1(SYS_AllocateFramebuffer(mode));
-
-    CON_Init(fb,
-             20, 20,
-             mode->fbWidth, mode->xfbHeight,
-             mode->fbWidth * VI_DISPLAY_PIX_SZ);
-
-    VIDEO_Configure(mode);
-    VIDEO_SetNextFramebuffer(fb);
-    VIDEO_SetBlack(false);
-    VIDEO_Flush();
-    VIDEO_WaitVSync();
-
-    if (mode->viTVMode & VI_NON_INTERLACE)
-        VIDEO_WaitVSync();
+    gfx_video_init(nullptr);
+    gfx_init();
+    gfx_con_init(nullptr);
 
     std::printf("Hello World!\n");
 
@@ -32,9 +25,24 @@ int main()
     while (running) {
         WPAD_ScanPads();
         u32 pressed = WPAD_ButtonsDown(0);
-        if (pressed & WPAD_BUTTON_HOME)
-            running = false;
+        if (pressed) {
+            if (pressed & WPAD_BUTTON_HOME) {
+                running = false;
+                std::printf("exiting...\n");
+            } else {
+                std::printf("press HOME to exit\n");
+            }
+        }
+
+        gfx_frame_start();
+        gfx_con_draw();
+        gfx_frame_end();
 
         VIDEO_WaitVSync();
     }
+
+    gfx_con_deinit();
+    gfx_deinit();
+    gfx_video_deinit();
+
 }
