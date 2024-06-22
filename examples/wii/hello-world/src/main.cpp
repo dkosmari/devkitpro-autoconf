@@ -9,9 +9,6 @@
 
 int main()
 {
-    // copy stdout to gecko USB
-    SYS_STDIO_Report(true);
-
     VIDEO_Init();
     WPAD_Init();
 
@@ -44,5 +41,4 @@ int main()
     gfx_con_deinit();
     gfx_deinit();
     gfx_video_deinit();
-
 }
