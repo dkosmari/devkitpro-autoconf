@@ -1,7 +1,6 @@
-#include <cstdio>
-#include <cerrno>
+#include <cstdio>               // printf()
 
-#include <sys/iosupport.h>
+#include <sys/iosupport.h>      // devoptab
 
 #include <gccore.h>
 
@@ -10,8 +9,7 @@
 #include "show.hpp"
 
 
-
-// This is how we hook into stdout/stderr with newlib. Let's send it to USB Gecko
+// This is how we hook into stdout/stderr with newlib. Let's send it to USB Gecko.
 
 // It's tradition to use gecko on port B, aka channel 1.
 static const int gecko_channel = 1;
@@ -38,7 +36,6 @@ void init_stdio()
     devoptab_list[STD_OUT] = &my_stdio;
     devoptab_list[STD_ERR] = &my_stdio;
 }
-
 
 
 // Note: SDL2 on the Wii replaces main() with SDL_main(), so we must use
@@ -84,7 +81,6 @@ int main(int, char*[])
         status = -4;
         goto error_destroy_window;
     }
-
 
     {
         const float size = 50;
