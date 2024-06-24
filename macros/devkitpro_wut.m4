@@ -28,16 +28,8 @@ AC_DEFUN([DEVKITPRO_WUT_INIT],[
 
     AC_REQUIRE([DEVKITPRO_PPC_INIT])
 
-    # See if we can find elf2rpl in PATH; if not, append $DEVKITPRO/tools/bin to PATH
-    # TODO: we should actually check the contents of PATH
-    AC_MSG_CHECKING([if $DEVKITPRO/tools/bin is in PATH])
-    AS_IF([! which elf2rpl 1>/dev/null 2>/dev/null],
-          [
-              AC_MSG_RESULT([no, will append to PATH])
-              AS_VAR_APPEND([PATH], [":$DEVKITPRO/tools/bin"])
-              AC_SUBST([PATH])
-          ],
-          [AC_MSG_RESULT([yes])])
+    # See if we can find elf2rpl in PATH
+    DEVKITPRO_TOOL_PATH([elf2rpl])
 
     AC_CHECK_PROGS([ELF2RPL], [elf2rpl])
     AC_CHECK_PROGS([WUHBTOOL], [wuhbtool])
@@ -82,13 +74,10 @@ AC_DEFUN([DEVKITPRO_WUT_INIT],[
 
     AX_PREPEND_FLAG([-specs=$WUT_ROOT/share/wut.specs], [DEVKITPRO_LDFLAGS])
 
-    DEVKITPRO_PUSH_FLAGS
-    AX_CHECK_LIBRARY([DEVKITPRO_WUT_LIBWUT],
-                     [wut.h],
-                     [wut],
-                     [AX_PREPEND_FLAG([-lwut], [DEVKITPRO_LIBS])],
-                     [AC_MSG_ERROR([wut not found in $DEVKITPRO; install the package with "dkp-pacman -S wut"])])
-    DEVKITPRO_POP_FLAGS
+    DEVKITPRO_CHECK_LIBRARY([DEVKITPRO_WUT_LIBWUT],
+                            [wut.h],
+                            [wut],
+                            [wut not found in $DEVKITPRO; install the package with "dkp-pacman -S wut"])
 
 
     # set DEVKITPRO_RPL_LDFLAGS
