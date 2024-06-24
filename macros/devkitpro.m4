@@ -27,7 +27,7 @@
 #   - Add `DISTCLEANFILES = $(AMINCLUDE)' to the toplevel `Makefile.am` to remove this
 #     file during `make distclean'.
 
-AC_DEFUN([DEVKITPRO_INIT],[
+AC_DEFUN([DEVKITPRO_INIT], [
 
     AC_REQUIRE([AC_CANONICAL_HOST])
 
@@ -91,7 +91,7 @@ clean-strip-elf:; \$(RM) *.strip.elf
 ])
 
 
-AC_DEFUN([DEVKITPRO_CHECK_LIBRARY],[
+AC_DEFUN([DEVKITPRO_CHECK_LIBRARY], [
     AX_VAR_PUSHVALUE([CFLAGS],   [$DEVKITPRO_CFLAGS $CFLAGS])
     AX_VAR_PUSHVALUE([CPPFLAGS], [$DEVKITPRO_CPPFLAGS $CPPFLAGS])
     AX_VAR_PUSHVALUE([CXXFLAGS], [$DEVKITPRO_CXXFLAGS $CXXFLAGS])
@@ -107,5 +107,20 @@ AC_DEFUN([DEVKITPRO_CHECK_LIBRARY],[
     AX_VAR_POPVALUE([CXXFLAGS])
     AX_VAR_POPVALUE([CPPFLAGS])
     AX_VAR_POPVALUE([CFLAGS])
+
+])
+
+
+AC_DEFUN([DEVKITPRO_TOOL_PATH], [
+
+    AS_VAR_SET([_TOOL_NAME], [$1])
+    AC_MSG_CHECKING([if $DEVKITPRO/tools/bin is in PATH])
+    AS_IF([! which $_TOOL_NAME 1>/dev/null 2>/dev/null],
+          [
+              AC_MSG_RESULT([no, will append to PATH])
+              AS_VAR_APPEND([PATH], [":$DEVKITPRO/tools/bin"])
+              AC_SUBST([PATH])
+          ],
+          [AC_MSG_RESULT([yes])])
 
 ])

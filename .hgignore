@@ -12,6 +12,7 @@ Makefile
 Makefile.in
 
 # these are needed for the examples
+*.3dsx
 *.dol
 *.elf
 *.o

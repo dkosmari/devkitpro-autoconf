@@ -28,15 +28,8 @@ AC_DEFUN([DEVKITPRO_WII_INIT], [
 
     AC_REQUIRE([DEVKITPRO_PPC_INIT])
 
-    # See if we can find elf2dol in PATH; if not, append $DEVKITPRO/tools/bin to PATH
-    AC_MSG_CHECKING([if $DEVKITPRO/tools/bin is in PATH])
-    AS_IF([! which elf2dol 1>/dev/null 2>/dev/null],
-          [
-              AC_MSG_RESULT([no, will append to PATH])
-              AS_VAR_APPEND([PATH], [":$DEVKITPRO/tools/bin"])
-              AC_SUBST([PATH])
-          ],
-          [AC_MSG_RESULT([yes])])
+    # See if we can find elf2dol in PATH
+    DEVKITPRO_TOOL_PATH([elf2dol])
 
     AC_CHECK_PROGS([ELF2DOL], [elf2dol])
     AC_CHECK_PROGS([GXTEXCONV], [gxtexconv])
@@ -49,7 +42,7 @@ AC_DEFUN([DEVKITPRO_WII_INIT], [
     AS_VAR_SET([PORTLIBS_WII_ROOT], [$PORTLIBS_ROOT/wii])
 
 
-    # See if we need to PORTLIBS_WII_ROOT/bin to PATH
+    # See if we need to append PORTLIBS_WII_ROOT/bin to PATH
     # TODO: we should actually check the contents of PATH
     AC_MSG_CHECKING([if $PORTLIBS_WII_ROOT/bin is in PATH])
     AS_IF([! which powerpc-eabi-pkg-config 1>/dev/null 2>/dev/null],
