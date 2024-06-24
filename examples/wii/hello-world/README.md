@@ -33,7 +33,6 @@ macro.
 The `Makefile.am` uses all of the `DEVKITPRO_*` variables in the corresponding Automake
 variables.
 
-The output is a `.elf` file that converted to a `.dol` file in the `all-local` target.
+The output is a `.elf` file that is converted to a `.dol` file in the `all-local` target.
 
-Extra Makefile rules are imported by adding the line `@INC_AMINCLUDE@` to the
-Makefile.
+Extra Makefile rules are imported by adding the line `@INC_AMINCLUDE@` to the Makefile.
