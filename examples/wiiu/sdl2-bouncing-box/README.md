@@ -17,29 +17,31 @@ bundle, with an audio file.
 
 ## Explanation
 
-### `bootstrap`
+### [`bootstrap`](bootstrap)
 
-The [`bootstrap`](bootstrap) script makes sure the macros are available without needing
-them to be installed in the system.
+The `bootstrap` script makes sure the macros are available without needing them to be
+installed in the system.
 
-### `configure.ac`
+### [`configure.ac`](configure.ac)
 
-The main detail of [configure.ac](configure.ac) is calling `PKG_CHECK_MODULES` to look up
-both SDL2 and SDL2-mixer flags, using `pkg-config`.
+The main detail of `configure.ac` is calling `PKG_CHECK_MODULES` to look up both SDL2 and
+SDL2-mixer flags, using `pkg-config`.
 
 This time around, we are going to be using multiple recursive `Makefile.am`, so we don't
 need the `subdir-objects` option. We also use the recursive `run` target, so we can use
 `make run` in all Makefiles, using the `run-local` target.
 
-### `Makefile.am`
+### [`Makefile.am`](Makefile.am)
 
-In the top-level [`Makefile.am`](Makefile.am) we make a rule for building the `.wuhb`
+In the top-level `Makefile.am` we make a rule for building the `.wuhb`
 file. Both `all-local` and `run-local` recursive targets are used to build it.
 
-### `src/Makefile.am`
+### [`src/Makefile.am`](src/Makefile.am)
 
-In [`src/Makefile.am`](src/Makefile.am) we use both `SDL2_CFLAGS` and `SDL2_LIBS`, in
-addition to the `DEVKITPRO_*` variables.
+In `src/Makefile.am` we use both `SDL2_CFLAGS` and `SDL2_LIBS`, in addition to the
+`DEVKITPRO_*` variables.
 
-We also want to build the `.rpx` for both `all-local` and `run-local` targets.
+We also want to build the `.rpx` for both `all-local` and `run-local` targets. The rules
+to make this conversion (`.elf` to `.rpx`) are imported into the `Makefile.am` with the
+line `@INC_AMINCLUDE@`.
 

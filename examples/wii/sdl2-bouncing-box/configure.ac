@@ -12,6 +12,7 @@ DEVKITPRO_WII_INIT
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 AC_PROG_CXX
+AC_LANG([C++])
 
 PKG_CHECK_MODULES([SDL2], [sdl2])
 
