@@ -8,7 +8,7 @@ Automake.
 
 1. `./bootstrap`
 
-2. `./configure --host=powerpc-eabi`
+2. `./configure --host=arm-none-eabi`
 
 3. `make`
 
