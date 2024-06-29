@@ -34,13 +34,14 @@ AC_DEFUN([WIIU_WUMS_INIT],[
 ])
 
 
-# WIIU_WUMS_CHECK_LIBCURLWRAPPER
-# ------------------------------
+# WIIU_WUMS_CHECK_LIBCURLWRAPPER([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+# ------------------------------------------------------------------------
 #
 # Checks for presence of libcurlwrapper.
 #
 # Output variables:
 #   - `DEVKITPRO_LIBS'
+#   - `HAVE_WIIU_WUMS_CHECK_LIBCURLWRAPPER'
 
 AC_DEFUN([WIIU_WUMS_CHECK_LIBCURLWRAPPER],[
 
@@ -49,18 +50,20 @@ AC_DEFUN([WIIU_WUMS_CHECK_LIBCURLWRAPPER],[
     DEVKITPRO_CHECK_LIBRARY([WIIU_WUMS_LIBCURLWRAPPER],
                             [curl/curl.h],
                             [curlwrapper],
-                            [libcurlwrapper not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libcurlwrapper])
+                            [$1],
+                            m4_default([$2], [AC_MSG_ERROR([libcurlwrapper not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libcurlwrapper])]))
 
 ])
 
 
-# WIIU_WUMS_CHECK_LIBNOTIFICATIONS
-# --------------------------------
+# WIIU_WUMS_CHECK_LIBNOTIFICATIONS([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+# --------------------------------------------------------------------------
 #
 # Checks for presence of libnotifications.
 #
 # Output variables:
 #   - `DEVKITPRO_LIBS'
+#   - `HAVE_WIIU_WUMS_LIBNOTIFICATIONS'
 
 AC_DEFUN([WIIU_WUMS_CHECK_LIBNOTIFICATIONS],[
 
@@ -69,7 +72,8 @@ AC_DEFUN([WIIU_WUMS_CHECK_LIBNOTIFICATIONS],[
     DEVKITPRO_CHECK_LIBRARY([WIIU_WUMS_LIBNOTIFICATIONS],
                             [notifications/notifications.h],
                             [notifications],
-                            [libnotifications not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libnotifications])
+                            [$1],
+                            m4_default([$2], [AC_MSG_ERROR([libnotifications not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libnotifications])]))
 
 ])
 
@@ -98,6 +102,7 @@ AC_DEFUN([WIIU_WUMS_MODULE_INIT],[
     DEVKITPRO_CHECK_LIBRARY([WIIU_WUMS_MODULE_TEST],
                             [wums.h],
                             [wums],
+                            [],
                             [WUMS not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/WiiUModuleSystem])
 
 

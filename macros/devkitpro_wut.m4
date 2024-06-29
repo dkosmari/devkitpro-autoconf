@@ -77,7 +77,8 @@ AC_DEFUN([DEVKITPRO_WUT_INIT],[
     DEVKITPRO_CHECK_LIBRARY([DEVKITPRO_WUT_LIBWUT],
                             [wut.h],
                             [wut],
-                            [wut not found in $DEVKITPRO; install the package with "dkp-pacman -S wut"])
+                            [],
+                            [AC_MSG_ERROR([wut not found in $DEVKITPRO; install the package with "dkp-pacman -S wut"])])
 
 
     # set DEVKITPRO_RPL_LDFLAGS

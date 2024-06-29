@@ -37,7 +37,8 @@ AC_DEFUN([WIIU_WUPS_INIT],[
     DEVKITPRO_CHECK_LIBRARY([WIIU_WUPS_LIBWUPS],
                             [wups.h],
                             [wups],
-                            [WUPS not found in $WIIU_WUPS_ROOT; get it from https://github.com/wiiu-env/WiiUPluginSystem])
+                            [],
+                            [AC_MSG_ERROR([WUPS not found in $WIIU_WUPS_ROOT; get it from https://github.com/wiiu-env/WiiUPluginSystem])])
 
 
     # custom Makefile rules

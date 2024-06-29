@@ -124,13 +124,14 @@ AC_DEFUN([DEVKITPRO_WII_CHECK_LIBFAT], [
 ])
 
 
-# DEVKITPRO_WII_CHECK_LIBGXFLUX
-# -----------------------------
+# DEVKITPRO_WII_CHECK_LIBGXFLUX([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+# -----------------------------------------------------------------------
 #
 # This macro checks for the presence of libgxflux.
 #
 # Output variables:
 #   - `DEVKITPRO_LIBS'
+#   - `HAVE_LIBGXFLUX'
 
 AC_DEFUN([DEVKITPRO_WII_CHECK_LIBGXFLUX], [
 
@@ -140,6 +141,7 @@ AC_DEFUN([DEVKITPRO_WII_CHECK_LIBGXFLUX], [
     DEVKITPRO_CHECK_LIBRARY([DEVKITPRO_WII_LIBGXFLUX],
                             [gxflux/gfx.h],
                             [gxflux],
-                            [libgxflux not found in $LIBOGC_ROOT; install the package with "dkp-pacman -S libgxflux"])
+                            [$1],
+                            m4_default([$2], [AC_MSG_ERROR([libgxflux not found in $LIBOGC_ROOT; install the package with "dkp-pacman -S libgxflux"])]))
 
 ])

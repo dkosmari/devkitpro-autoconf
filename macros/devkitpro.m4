@@ -91,6 +91,17 @@ clean-strip-elf:; \$(RM) *.strip.elf
 ])
 
 
+# DEVKITPRO_CHECK_LIBRARY(VARIABLE-PREFIX,
+#                         HEADER,
+#                         LIBRARY,
+#                         [ACTION-IF-FOUND],
+#                         [ACTION-IF-NOT-FOUND])
+# ----------------------------------------------
+#
+# Output variables:
+#   - `DEVKITPRO_LIBS'
+#   - `HAVE_PREFIX'
+
 AC_DEFUN([DEVKITPRO_CHECK_LIBRARY], [
     AX_VAR_PUSHVALUE([CFLAGS],   [$DEVKITPRO_CFLAGS $CFLAGS])
     AX_VAR_PUSHVALUE([CPPFLAGS], [$DEVKITPRO_CPPFLAGS $CPPFLAGS])
@@ -99,8 +110,9 @@ AC_DEFUN([DEVKITPRO_CHECK_LIBRARY], [
     AX_VAR_PUSHVALUE([LIBS],     [$DEVKITPRO_LIBS $LIBS])
 
     AX_CHECK_LIBRARY([$1], [$2], [$3],
-                     [AX_PREPEND_FLAG([-l$3], [DEVKITPRO_LIBS])],
-                     [AC_MSG_ERROR([$4])])
+                     [AX_PREPEND_FLAG([-l$3], [DEVKITPRO_LIBS])
+                      $4],
+                     [$5])
 
     AX_VAR_POPVALUE([LIBS])
     AX_VAR_POPVALUE([LDFLAGS])
