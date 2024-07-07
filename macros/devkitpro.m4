@@ -1,5 +1,6 @@
 # -*- mode: autoconf -*-
 # devkitpro.m4 - Macros to handle devkitPro setup.
+# URL: https://github.com/dkosmari/devkitpro-autoconf/
 
 # Copyright (c) 2024 Daniel K. O. <dkosmari>
 #

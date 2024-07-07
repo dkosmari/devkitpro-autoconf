@@ -1,5 +1,6 @@
 # -*- mode: autoconf -*-
 # devkitpro_wut.m4 - Macros to handle WUT setup.
+# URL: https://github.com/dkosmari/devkitpro-autoconf/
 
 # Copyright (c) 2024 Daniel K. O. <dkosmari>
 #

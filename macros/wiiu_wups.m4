@@ -1,5 +1,6 @@
 # -*- mode: autoconf -*-
 # wiiu_wups.m4 - Macros to handle Wii U Plugin System
+# URL: https://github.com/dkosmari/devkitpro-autoconf/
 
 # Copyright (c) 2024 Daniel K. O. <dkosmari>
 #

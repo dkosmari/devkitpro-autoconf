@@ -1,5 +1,6 @@
 # -*- mode: autoconf -*-
 # devkitpro_arm.m4 - Macros to handle ARM toolchains.
+# URL: https://github.com/dkosmari/devkitpro-autoconf/
 
 # Copyright (c) 2024 Daniel K. O. <dkosmari>
 #
