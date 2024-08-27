@@ -8,7 +8,7 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 1
+#serial 2
 
 # DEVKITPRO_WII_INIT
 # ------------------
@@ -104,8 +104,8 @@ clean-tpl:; \$(RM) *.tpl
 ])
 
 
-# DEVKITPRO_WII_CHECK_LIBFAT
-# --------------------------
+# DEVKITPRO_WII_CHECK_LIBFAT([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+# --------------------------------------------------------------------
 #
 # This macro checks for the presence of libfat-ogc.
 #
@@ -120,7 +120,12 @@ AC_DEFUN([DEVKITPRO_WII_CHECK_LIBFAT], [
     DEVKITPRO_CHECK_LIBRARY([DEVKITPRO_WII_LIBFAT],
                             [fat.h],
                             [fat],
-                            [libfat-ogc not found in $LIBOGC_ROOT; install the package with "dkp-pacman -S libfat-ogc"])
+                            [],
+                            [$1],
+                            m4_default([$2],
+                                       AC_MSG_ERROR([libfat-ogc not found in $LIBOGC_ROOT; install the package with "dkp-pacman -S libfat-ogc"])
+                            )
+                           )
 
 ])
 
@@ -142,7 +147,11 @@ AC_DEFUN([DEVKITPRO_WII_CHECK_LIBGXFLUX], [
     DEVKITPRO_CHECK_LIBRARY([DEVKITPRO_WII_LIBGXFLUX],
                             [gxflux/gfx.h],
                             [gxflux],
+                            [],
                             [$1],
-                            m4_default([$2], [AC_MSG_ERROR([libgxflux not found in $LIBOGC_ROOT; install the package with "dkp-pacman -S libgxflux"])]))
+                            m4_default([$2],
+                                       [AC_MSG_ERROR([libgxflux not found in $LIBOGC_ROOT; install the package with "dkp-pacman -S libgxflux"])]
+                            )
+                           )
 
 ])
