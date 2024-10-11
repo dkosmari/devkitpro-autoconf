@@ -17,6 +17,7 @@ Makefile.in
 *.elf
 *.o
 *.rpx
+*.wms
 *.wps
 *.wuhb
 .deps

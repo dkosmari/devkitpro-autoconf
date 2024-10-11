@@ -8,7 +8,7 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 3
+#serial 4
 
 # WIIU_WUMS_INIT
 # --------------
@@ -55,6 +55,33 @@ AC_DEFUN([WIIU_WUMS_CHECK_LIBCURLWRAPPER],[
                             [$1],
                             m4_default([$2],
                                        [AC_MSG_ERROR([libcurlwrapper not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libcurlwrapper])]
+                                      )
+                           )
+
+])
+
+
+# WIIU_WUMS_CHECK_LIBFUNCTIONPATCHER([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+# ----------------------------------------------------------------------------
+#
+# Checks for presence of libfunctionpatcher.
+#
+# Output variables:
+#   - `DEVKITPRO_LIBS'
+#   - `DEVKITPRO_LDFLAGS`
+#   - `HAVE_WIIU_WUMS_LIBFUNCTIONPATCHER'
+
+AC_DEFUN([WIIU_WUMS_CHECK_LIBFUNCTIONPATCHER],[
+
+    AC_REQUIRE([WIIU_WUMS_INIT])
+
+    DEVKITPRO_CHECK_LIBRARY([WIIU_WUMS_LIBFUNCTIONPATCHER],
+                            [function_patcher/function_patching.h],
+                            [functionpatcher],
+                            [],
+                            [$1],
+                            m4_default([$2],
+                                       [AC_MSG_ERROR([libfunctionpatcher not found in $WIIU_WUMS_ROOT; get it from https://github.com/dkosmari/libfunctionpatcher])]
                                       )
                            )
 
