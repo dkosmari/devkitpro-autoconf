@@ -8,7 +8,7 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 4
+#serial 5
 
 # WIIU_WUMS_INIT
 # --------------
@@ -81,7 +81,7 @@ AC_DEFUN([WIIU_WUMS_CHECK_LIBFUNCTIONPATCHER],[
                             [],
                             [$1],
                             m4_default([$2],
-                                       [AC_MSG_ERROR([libfunctionpatcher not found in $WIIU_WUMS_ROOT; get it from https://github.com/dkosmari/libfunctionpatcher])]
+                                       [AC_MSG_ERROR([libfunctionpatcher not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libfunctionpatcher])]
                                       )
                            )
 
