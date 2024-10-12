@@ -41,4 +41,5 @@ aclocal -I m4 --install
 exec autoreconf --install "$@"
 ```
 
-You should also add `m4` to the source control.
+You should also add your `m4` directory to the source control, so any clones will have the
+exact same macro versions as you.
