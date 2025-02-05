@@ -38,6 +38,10 @@ using std::cout;
 using std::endl;
 
 
+extern "C" void KPADSetPosPlayMode(KPADChan channel, BOOL mode);
+extern "C" void KPADSetPosParam(KPADChan channel, float radius, float sensitivity);
+
+
 // These functions connect STDOUT to the WHBLog*() API.
 
 ssize_t
@@ -389,6 +393,8 @@ struct App {
         if (status == WPAD_ERROR_NONE) {
             app->wiimote_present[channel] = true;
             KPADEnableDPD(channel);
+            // KPADSetPosPlayMode(channel, 1);
+            KPADSetPosParam(channel, 0.05, 1.0);
         }
         else
             app->wiimote_present[channel] = false;
