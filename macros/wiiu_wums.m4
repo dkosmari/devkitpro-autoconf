@@ -8,7 +8,7 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 5
+#serial 6
 
 # WIIU_WUMS_INIT
 # --------------
@@ -31,6 +31,32 @@ AC_DEFUN([WIIU_WUMS_INIT],[
     AX_PREPEND_FLAG([-I$WIIU_WUMS_ROOT/include], [DEVKITPRO_CPPFLAGS])
 
     AX_PREPEND_FLAG([-L$WIIU_WUMS_ROOT/lib], [DEVKITPRO_LIBS])
+
+])
+
+
+# WIIU_WUMS_CHECK_LIBBUTTONCOMBO([ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+# ------------------------------------------------------------------------
+#
+# Checks for presence of libbuttoncombo.
+#
+# Output variables:
+#   - `DEVKITPRO_LIBS'
+#   - `HAVE_WIIU_WUMS_CHECK_LIBBUTTONCOMBO'
+
+AC_DEFUN([WIIU_WUMS_CHECK_LIBBUTTONCOMBO],[
+
+    AC_REQUIRE([WIIU_WUMS_INIT])
+
+    DEVKITPRO_CHECK_LIBRARY([WIIU_WUMS_LIBBUTTONCOMBO],
+                            [buttoncombo/api.h],
+                            [buttoncombo],
+                            [],
+                            [$1],
+                            m4_default([$2],
+                                       [AC_MSG_ERROR([libbuttoncombo not found in $WIIU_WUMS_ROOT; get it from https://github.com/wiiu-env/libbuttoncombo])]
+                                      )
+                           )
 
 ])
 
