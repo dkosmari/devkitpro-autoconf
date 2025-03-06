@@ -1,13 +1,13 @@
 #include <array>
 #include <atomic>
 #include <cassert>
-#include <iostream>
-#include <string>
-#include <stdexcept>
-#include <vector>
-#include <thread>
 #include <cmath>
+#include <iostream>
 #include <numbers>
+#include <stdexcept>
+#include <string>
+#include <thread>
+#include <vector>
 
 #include <sys/iosupport.h>      // devoptab_list, devoptab_t
 
@@ -175,7 +175,6 @@ struct Cursor {
         trail.emplace_back(x, y);
     }
 
-
 };
 
 
@@ -258,11 +257,12 @@ struct App {
             U'\ue05b',
             U'\ue05c',
         };
+        // Cursor colors based off on Wii U Menu.
         const SDL_Color colors[4] = {
-            { 0x00, 0x80, 0xff, 0xff }, // player 1 is light blue
-            { 0xff, 0x40, 0x40, 0xff }, // player 2 is light red
-            { 0x30, 0xff, 0x20, 0xff }, // player 3 is light green
-            { 0xff, 0xc0, 0x00, 0xff }, // player 4 is gold
+            { 0x00, 0x8c, 0xff, 0xff },
+            { 0xff, 0x41, 0x33, 0xff },
+            { 0x00, 0xa6, 0x5f, 0xff },
+            { 0xff, 0xb3, 0x00, 0xff },
         };
 
         for (unsigned i = 0; i < 4; ++i) {
@@ -322,7 +322,7 @@ struct App {
                 continue;
 
             /*
-             * We use the "tip" offset to indicate where is the "center" of the cursor.
+             * We use the "tip" offset to indicate the "center" of the cursor.
              * The rotation is also applied around this "center".
              */
             SDL_FPoint tip{
