@@ -3,6 +3,7 @@
  */
 
 #include <string>
+#include <thread>
 
 #include <sys/iosupport.h>      // devoptab_list, devoptab_t
 
@@ -18,6 +19,7 @@ namespace {
     bool module_initialized = false;
     bool udp_initialized    = false;
 
+
     void
     init_logs()
         noexcept
@@ -28,6 +30,7 @@ namespace {
             udp_initialized = WHBLogUdpInit();
         }
     }
+
 
     void
     fini_logs()
@@ -47,26 +50,27 @@ namespace {
         }
     }
 
+
+    ssize_t
+    write_msg_to_whb_log(struct _reent*,
+                         void*,
+                         const char* buf,
+                         size_t len)
+        noexcept
+    {
+        try {
+            static std::mutex mutex;
+            std::lock_guard guard{mutex};
+            std::string msg(buf, len);
+            WHBLogWrite(msg.data());
+            return len;
+        }
+        catch (...) {
+            return -1;
+        }
+    }
+
 } // namespace
-
-
-static
-ssize_t
-write_msg_to_whb_log(struct _reent*,
-                     void*,
-                     const char* buf,
-                     size_t len)
-    noexcept
-{
-    try {
-        std::string msg(buf, len);
-        WHBLogWrite(msg.data());
-        return len;
-    }
-    catch (...) {
-        return -1;
-    }
-}
 
 
 __attribute__(( __constructor__ ))
@@ -81,6 +85,7 @@ init_stdout()
     dev.write_r = write_msg_to_whb_log;
     devoptab_list[STD_OUT] = &dev;
 }
+
 
 __attribute__(( __destructor__ ))
 void
