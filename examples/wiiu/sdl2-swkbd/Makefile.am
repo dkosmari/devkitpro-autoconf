@@ -1,8 +1,8 @@
 EXTRA_DIST = \
 	bootstrap
 
-WUHB_FILE = sdl-keyboard.wuhb
-RPX_FILE = sdl-keyboard.rpx
+WUHB_FILE = sdl2-swkbd.wuhb
+RPX_FILE = sdl2-swkbd.rpx
 
 
 AM_CPPFLAGS = \
@@ -20,9 +20,9 @@ LIBS = \
 	$(DEVKITPRO_LIBS)
 
 
-noinst_PROGRAMS = sdl-keyboard.elf
+noinst_PROGRAMS = sdl2-swkbd.elf
 
-sdl_keyboard_elf_SOURCES =			\
+sdl2_swkbd_elf_SOURCES =			\
 	src/main.cpp				\
 	src/sdl.cpp src/sdl.hpp			\
 	src/sdl_debug.cpp src/sdl_debug.hpp	\
