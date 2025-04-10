@@ -40,7 +40,7 @@ $(WUHB_FILE): $(RPX_FILE)
 all-local: $(WUHB_FILE)
 
 
-run: $(RPX_FILE)
+run: $(WUHB_FILE)
 	WIILOAD=tcp:wiiu wiiload $<
 
 

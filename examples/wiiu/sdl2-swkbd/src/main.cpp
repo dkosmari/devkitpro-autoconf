@@ -1,11 +1,10 @@
 #include <array>
-#include <clocale>
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include <coreinit/memory.h>    // OSGetSharedData()
-#include <nn/swkbd.h>
+#include <sysapp/title.h>
 
 #include "sdl.hpp"
 #include "sdl_debug.hpp"
@@ -30,7 +29,7 @@ using sdl::vec2;
 
 const std::array locales{
     // use system config
-    "C",
+    "",
     // USA region
     "en_US",
     "fr_CA",
@@ -292,7 +291,6 @@ struct App {
         renderer.set_color(0, 0, 0, 0);
         renderer.draw_point(1, 1);
 
-
         for (auto& label : labels)
             label.draw(&label == selected);
 
@@ -491,13 +489,9 @@ struct App {
             new_locale = 0;
         current_locale = new_locale;
 
-        char* result = std::setlocale(LC_CTYPE, locales[current_locale]);
-        if (result)
-            cout << "set LC_CTYPE to " << result << endl;
-        else
-            cout << "failed to set LC_CTYPE!" << endl;
+        SDL_WiiUSetSWKBDLocale(locales[current_locale]);
 
-        std::string locale_str = "LC_CTYPE: \""s + locales[current_locale] + "\""s;
+        std::string locale_str = "Locale: \""s + locales[current_locale] + "\""s;
         auto surface = font.render_blended(locale_str.data());
         locale_texture = renderer.create_texture(surface);
     }
@@ -508,6 +502,10 @@ struct App {
 int main()
 {
     cout << "Starting " << PACKAGE << endl;
+
+    // WORKAROUND
+    // Force linking against sysapp
+    SYSCheckTitleExists(0);
 
     try {
         App app;
