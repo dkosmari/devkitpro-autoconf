@@ -1,5 +1,6 @@
 #include <array>
 #include <iostream>
+#include <ranges>
 #include <string>
 #include <vector>
 
@@ -59,8 +60,8 @@ struct Label {
     static constexpr int border = 4;
     static constexpr int padding = 16;
 
-    sdl::renderer& renderer;
-    sdl::ttf::font& font;
+    sdl::renderer* renderer = nullptr;
+    sdl::ttf::font* font = nullptr;
 
     std::string text;
     sdl::texture texture;
@@ -73,11 +74,12 @@ struct Label {
     Label(sdl::renderer& renderer,
           sdl::ttf::font& font,
           const std::string& text_) :
-        renderer(renderer),
-        font(font)
+        renderer{&renderer},
+        font{&font}
     {
         set_text(text_);
     }
+
 
     void
     set_text(const std::string& new_text)
@@ -88,8 +90,8 @@ struct Label {
         texture.destroy();
         try {
             if (!text.empty()) {
-                auto surface = font.render_blended_wrapped(text.data());
-                texture = renderer.create_texture(surface);
+                auto surface = font->render_blended_wrapped(text.data());
+                texture = renderer->create_texture(surface);
             }
         }
         catch (std::exception& e) {
@@ -117,7 +119,7 @@ struct Label {
         const
     {
         if (!texture)
-            return {0, font.height()};
+            return {0, font->height()};
         return texture.size();
     }
 
@@ -152,19 +154,19 @@ struct Label {
         const
     {
         // draw border
-        renderer.set_color(0xffffff_rgb);
-        renderer.fill_rect(border_rect);
+        renderer->set_color(0xffffff_rgb);
+        renderer->fill_rect(border_rect);
 
         // draw background
         if (selected)
-            renderer.set_color(0x404080_rgb);
+            renderer->set_color(0x404080_rgb);
         else
-            renderer.set_color(0x000000_rgb);
-        renderer.fill_rect(box_rect);
+            renderer->set_color(0x000000_rgb);
+        renderer->fill_rect(box_rect);
 
         // draw text
         if (texture)
-            renderer.copy(texture, {}, text_rect);
+            renderer->copy(texture, {}, text_rect);
     }
 
     bool
@@ -210,7 +212,8 @@ struct App {
 
     std::vector<Label> labels;
 
-    Label* selected = nullptr;
+    // Label* selected = nullptr;
+    std::optional<std::size_t> selected_idx;
     vec2 grab_offset;
     vec2 press_pos;
     vec2 release_pos;
@@ -291,8 +294,8 @@ struct App {
         renderer.set_color(0, 0, 0, 0);
         renderer.draw_point(1, 1);
 
-        for (auto& label : labels)
-            label.draw(&label == selected);
+        for (auto [idx, label] : std::views::enumerate(labels))
+            label.draw(selected_idx && std::size_t(idx) == *selected_idx);
 
         if (locale_texture) {
             sdl::rect locale_rect;
@@ -367,10 +370,10 @@ struct App {
             return;
 
         press_pos = {event.x, event.y};
-        selected = nullptr;
-        for (auto& label : labels)
+        selected_idx.reset();
+        for (auto [idx, label] : std::views::enumerate(labels))
             if (label.inside(press_pos)) {
-                selected = &label;
+                selected_idx = idx;
                 grab_offset = label.relative({event.x, event.y});
                 break;
             }
@@ -381,19 +384,17 @@ struct App {
     {
         release_pos = {event.x, event.y};
 
-        const float drag_threshold = 20;
+        const float drag_threshold = 25;
         bool dragged = (release_pos - press_pos).length() > drag_threshold;
 
-        if (selected) {
+        if (selected_idx) {
             if (!dragged) {
                 if (event.clicks == 2) {
                     // double-clicked on a label
                     creating = false;
-                    editing_text.clear();
-
-                    SDL_WiiUSetSWKBDInitialText(selected->text.data());
+                    Label& label = labels[*selected_idx];
+                    SDL_WiiUSetSWKBDInitialText(label.text.data());
                     SDL_WiiUSetSWKBDHighlightInitialText(SDL_TRUE);
-                    SDL_WiiUSetSWKBDShowWordSuggestions(SDL_TRUE);
                     SDL_WiiUSetSWKBDOKLabel("Modify");
                     window.focus();
                     SDL_StartTextInput();
@@ -403,13 +404,7 @@ struct App {
             if (event.clicks == 2) {
                 // double-clicked on the background
                 creating = true;
-                editing_text.clear();
-                labels.emplace_back(renderer, font, "");
-                selected = &labels.back();
-                selected->set_position(release_pos);
-
-                SDL_WiiUSetSWKBDHintText("New label text...");
-                SDL_WiiUSetSWKBDShowWordSuggestions(SDL_TRUE);
+                SDL_WiiUSetSWKBDHintText("New label...");
                 SDL_WiiUSetSWKBDOKLabel("Create");
                 window.focus();
                 SDL_StartTextInput();
@@ -424,20 +419,16 @@ struct App {
         if ((event.state & 1) == 0)
             return;
 
-        if (selected) {
+        if (selected_idx) {
             vec2 mouse_pos = {event.x, event.y};
-            selected->set_position(mouse_pos - grab_offset);
+            Label& label = labels[*selected_idx];
+            label.set_position(mouse_pos - grab_offset);
         }
     }
 
     void
     handle_text_input(const SDL_TextInputEvent& event)
     {
-        if (!selected) {
-            cout << "ignoring text input, nothing selected" << endl;
-            return;
-        }
-        cout << "appending to editing_text: \"" << event.text << "\"" << endl;
         editing_text += event.text;
     }
 
@@ -448,18 +439,31 @@ struct App {
             return;
 
         switch (event.msg->msg.wiiu.event) {
-            case SDL_WIIU_SYSWM_SWKBD_OK_EVENT:
-                if (selected)
-                    selected->set_text(editing_text);
+            case SDL_WIIU_SYSWM_SWKBD_OK_START_EVENT:
+                editing_text.clear();
+                break;
+
+            case SDL_WIIU_SYSWM_SWKBD_OK_FINISH_EVENT:
+                if (creating) {
+                    labels.emplace_back(renderer, font, editing_text);
+                    labels.back().set_position(release_pos);
+                    selected_idx = labels.size() - 1;
+                } else {
+                    if (selected_idx) {
+                        if (!editing_text.empty()) {
+                            labels[*selected_idx].set_text(editing_text);
+                        } else {
+                            // empty string, let's delete the selected label
+                            labels.erase(labels.begin() + *selected_idx);
+                            selected_idx.reset();
+                        }
+                    }
+                }
                 editing_text.clear();
                 break;
 
             case SDL_WIIU_SYSWM_SWKBD_CANCEL_EVENT:
                 editing_text.clear();
-                if (creating) {
-                    labels.pop_back();
-                    selected = nullptr;
-                }
                 break;
         }
     }
