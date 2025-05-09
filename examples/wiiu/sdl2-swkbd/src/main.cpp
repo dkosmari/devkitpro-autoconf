@@ -460,10 +460,12 @@ struct App {
                     }
                 }
                 editing_text.clear();
+                SDL_StopTextInput();
                 break;
 
             case SDL_WIIU_SYSWM_SWKBD_CANCEL_EVENT:
                 editing_text.clear();
+                SDL_StopTextInput();
                 break;
         }
     }

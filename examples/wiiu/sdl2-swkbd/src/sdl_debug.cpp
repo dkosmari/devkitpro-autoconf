@@ -197,7 +197,7 @@ namespace sdl::debug {
             default:
                 type = "invalid";
         }
-        printf("SDL_DollarGestureEvent: type=%s, touchId=%lld, gestureId=%lld, numFingers=%u,"
+        printf("SDL_DollarGestureEvent: type=%s, touchId=%" SDL_PRIs64 ", gestureId=%" SDL_PRIs64 ", numFingers=%u,"
                " error=%f, x=%f, y=%f\n",
                type,
                e.touchId,
@@ -480,7 +480,7 @@ namespace sdl::debug {
     void
     print(const SDL_MultiGestureEvent& e)
     {
-        printf("SDL_MultiGestureEvent: touchId=%lld, dTheta=%f, dDist=%f, "
+        printf("SDL_MultiGestureEvent: touchId=%" SDL_PRIs64 ", dTheta=%f, dDist=%f, "
                "x=%f, y=%f, numFingers=%u\n",
                e.touchId,
                e.dTheta,
@@ -573,7 +573,7 @@ namespace sdl::debug {
             default:
                 type = "invalid";
         }
-        printf("SDL_TouchFingerEvent: type=%s, touchId=%lld, fingerId=%lld,"
+        printf("SDL_TouchFingerEvent: type=%s, touchId=%" SDL_PRIs64 ", fingerId=%" SDL_PRIs64 ","
                " x=%f, y=%f, dx=%f, dy=%f, pressure=%f, windowID=%u\n",
                type,
                e.touchId,
