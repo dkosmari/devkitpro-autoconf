@@ -27,11 +27,10 @@ void init_stdio()
     if (!usb_isgeckoalive(gecko_channel))
         return;
 
-    static const devoptab_t my_stdio {
-        .name = "stdio",
-        .structSize = sizeof(devoptab_t),
-        .write_r = write_to_gecko,
-    };
+    static devoptab_t my_stdio;
+    my_stdio.name = "stdio";
+    my_stdio.structSize = sizeof(devoptab_t);
+    my_stdio.write_r = write_to_gecko;
 
     devoptab_list[STD_OUT] = &my_stdio;
     devoptab_list[STD_ERR] = &my_stdio;
@@ -136,7 +135,7 @@ int main(int, char*[])
 
             px += vx;
             py += vy;
-            bool bounced = false;
+            [[maybe_unused]] bool bounced = false;
             if ((px >= max_x && vx > 0)
                 || (px <= 0 && vx < 0)) {
                 vx = -vx;

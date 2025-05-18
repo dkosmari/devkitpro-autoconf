@@ -16,8 +16,8 @@ through the [libnotifications](https://github.com/wiiu-env/libnotifications) lib
 3. `make`
 
 Then copy the `dummy.wps` plugin to the Aroma plugins folder in the SD card. If your Wii U
-is named `wiiu` in your local network, you can run `make install` to upload the file using
-curl; similarly, `make uninstall` will delete the remote file.
+is named `wiiu` in your local network and running `ftpiiu`, you can run `make install` to
+upload the file using curl; similarly, `make uninstall` will delete the remote file.
 
 
 ## Explanation
@@ -27,25 +27,28 @@ curl; similarly, `make uninstall` will delete the remote file.
 The [`bootstrap`](bootstrap) script makes sure the macros are available without needing
 them to be installed in the system.
 
+
 ### `configure.ac`
 
 In the [`configure.ac`](configure.ac), we need both WUPS and WUMS environments
 initialized, using the macros `WIIU_WUPS_INIT` and `WIIU_WUMS_INIT`.
 
-To use of the `libnotifications` component of WUMS, we use the
-`WIIU_WUMS_CHECK_LIBNOTIFICATIONS` macro. It will ensure that `libnotifications` is
-present, and add it to `DEVKITPRO_LIBS`.
+To set up the basic compilation flags for WUPS, we call `WIIU_WUPS_SETUP`.
+
+Linking against the `libnotifications` module we use
+`WIIU_WUMS_CHECK_LIBNOTIFICATIONS`. We could just write `-lnotifications` in the Makefile
+for the linker, but this macros shows a nice error message in case the library is missing.
+
 
 ### `Makefile.am`
 
-The [`Makefile.am`](Makefile.am) starts with using the `DEVKITPRO_*` variables to adjust
-all the compiler and linker flags.
-
-Despite the plugin being a library (no `main()` function) we still use the `PROGRAMS`
-primary to create a `.elf` file, and then convert it to a `.wps` file in the `all-local`
-target. The `noinst_` prefix ensures the `.elf` is not installed on `make install`.
+The [`Makefile.am`](Makefile.am) defines a `.elf` target that will converted to `.wps`
+later. Despite the plugin being a library (it has no `main()` function) we still use the
+`_PROGRAMS` primary to create a `.elf` file, and then convert it to a `.wps` file in the
+`all-local` target. The `noinst_` prefix ensures the `.elf` is not installed on `make
+install`.
 
 To import the extra Makefile rules, we add `@INC_AMINCLUDE@`.
 
 As an extra, we can use `install-exec-local` and `uninstall-local` targets to
-upload/delete the plugin on the Wii U, if the ftpiiu plugin is active.
+upload/delete the plugin using FTP.

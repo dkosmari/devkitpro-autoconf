@@ -5,19 +5,11 @@ WUHB_FILE = sdl2-swkbd.wuhb
 RPX_FILE = sdl2-swkbd.rpx
 
 
-AM_CPPFLAGS = \
-	$(DEVKITPRO_CPPFLAGS) \
-	$(SDL2_CFLAGS)
+AM_CPPFLAGS = $(SDL2_CFLAGS)
 
-AM_CXXFLAGS = \
-	-Wall -Wextra -Werror \
-	$(DEVKITPRO_CXXFLAGS)
+AM_CXXFLAGS = -Wall -Wextra -Werror
 
-AM_LDFLAGS = $(DEVKITPRO_LDFLAGS)
-
-LIBS = \
-	$(SDL2_LIBS) \
-	$(DEVKITPRO_LIBS)
+LDADD = $(SDL2_LIBS)
 
 
 noinst_PROGRAMS = sdl2-swkbd.elf
@@ -56,6 +48,7 @@ company: compile_flags.txt
 compile_flags.txt: Makefile
 	printf "%s" "$(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS)" | xargs -n1 | sort -u > $(srcdir)/compile_flags.txt
 	$(CPP) -xc++ /dev/null -E -Wp,-v 2>&1 | sed -n 's,^ ,-I,p' >> $(srcdir)/compile_flags.txt
+
 
 @INC_AMINCLUDE@
 

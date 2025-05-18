@@ -2,12 +2,6 @@ EXTRA_DIST = \
 	bootstrap \
 	README.md
 
-# Use all the DEVKITPRO_* flags variables.
-AM_CPPFLAGS = $(DEVKITPRO_CPPFLAGS)
-AM_CXXFLAGS = $(DEVKITPRO_CXXFLAGS)
-AM_LDFLAGS = $(DEVKITPRO_LDFLAGS)
-LIBS = $(DEVKITPRO_LIBS)
-
 # We compile a regular PROGRAMS .elf, then ask it to be converted to .wms later.
 WMS_FILE = dummy.wms
 noinst_PROGRAMS = dummy.elf

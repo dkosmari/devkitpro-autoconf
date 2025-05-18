@@ -35,8 +35,8 @@ When you use these macros for your own project, your `bootstrap` script should l
 this instead:
 
 ```
-# Copy all non-standard macros to our local macro repository.
-aclocal -I m4 --install
+# Copy/update all non-standard macros to our local macro repository.
+aclocal --install
 # Now invoke autoreconf to generate the configure script.
 exec autoreconf --install "$@"
 ```

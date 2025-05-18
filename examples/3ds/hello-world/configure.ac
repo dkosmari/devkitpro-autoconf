@@ -11,9 +11,10 @@ DEVKITPRO_3DS_INIT
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
-# Checks for programs.
 AC_PROG_CXX
 AC_LANG([C++])
+
+DEVKITPRO_3DS_SETUP
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

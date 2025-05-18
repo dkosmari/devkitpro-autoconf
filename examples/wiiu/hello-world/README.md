@@ -20,27 +20,29 @@ Automake.
 The bootstrap script makes sure the macros are available without needing them
 to be installed in the system.
 
+
 ### [`configure.ac`](configure.ac)
 
-In `configure.ac`, the only special line is the use of the
-`DEVKITPRO_WUT_INIT` macro. It must be called before `AM_INIT_AUTOMAKE`; there's an
-ordering check to make sure you don't call them out of order.
+In `configure.ac` we use two macros:
+
+  - `DEVKITPRO_WUT_INIT`: this adjust a number of variables, including `PATH`, for cross
+    compilation. This saves some typing from having to later invoke the configure script
+    with a bajillion arguments. It must be called *before* `AM_INIT_AUTOMAKE` and any
+    tools, otherwise the wrong compiler/tool might be used by the `Makefile`.
+
+  - `DEVKITPRO_WUT_SETUP`: this adjusts all the usual compilation flags (`CPPFLAGS`,
+    `CFLAGS`, `CXXFLAGS`, `LDFLAGS`, `LIBS`) to point the WUT environment. Call this after
+    `AM_INIT_AUTOMAKE`, and Automake will fill in some defaults for `CFLAGS`/`CXXFLAGS`
+    (`-O2 -g`) if you don't set them to anything.
+
 
 ### [`Makefile.am`](Makefile.am)
 
 The `Makefile.am` is the main focus:
 
-  - Use flags variables where appropriate:
-      - `DEVKITPRO_CFLAGS`
-      - `DEVKITPRO_CPPFLAGS`
-      - `DEVKITPRO_CXXFLAGS`
-      - `DEVKITPRO_LDFLAGS`
-      - `DEVKITPRO_LIBS`
-      - `DEVKITPRO_RPL_LDFLAGS` if you're building a `.rpl`.
-
   - Always produce a `.elf` program first. Automake knows how to create .elf binaries from
     source code, so we take advantage of that.
     
-  - Use the `all-local` target to trigger a conversion to the final binary you want.
+  - Use the `all-local` target to process the `.elf` output into a `.rpx` (and `.wuhb`) file.
   
   - Add `@INC_AMINCLUDE@` so the Makefile has the special devkitPro rules.

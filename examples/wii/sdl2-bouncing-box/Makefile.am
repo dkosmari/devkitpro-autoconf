@@ -3,11 +3,11 @@ EXTRA_DIST = \
 	README.md
 
 
-# Use the DEVKITPRO_* and SDL2_* variables.
-AM_CPPFLAGS = $(SDL2_CFLAGS) $(DEVKITPRO_CPPFLAGS)
-AM_CXXFLAGS = $(DEVKITPRO_CXXFLAGS)
-AM_LDFLAGS = $(DEVKITPRO_LDFLAGS)
-LIBS = $(SDL2_LIBS) $(DEVKITPRO_LIBS)
+AM_CPPFLAGS = $(SDL2_CFLAGS)
+
+AM_CXXFLAGS = -Wall -Wextra -Werror
+
+LDADD = $(SDL2_LIBS)
 
 
 # Create a .elf executable, then convert it to .dol using the all-local target.
@@ -23,6 +23,7 @@ all-local: $(DOL_FILE)
 
 # Import the extra rules into the Makefile.
 @INC_AMINCLUDE@
+
 # Clean up "aminclude.am" during "make distclean".
 DISTCLEANFILES = $(AMINCLIDE)
 

@@ -21,24 +21,22 @@ This example shows how to build a SDL2 application for the Wii.
 The `bootstrap` script makes sure the macros are available without needing them to be
 installed in the system.
 
+
 ### [`configure.ac`](configure.ac)
 
-First, call the `DEVKITPRO_WII_INIT` to set up the environment for Wii homebrew. This
-adjusts the `PATH` variable if necessary, and defines various `DEKVITPRO_*` variables to
-be used in Makefiles.
+`DEVKITPRO_WII_INIT` is used to set up paths for the cross compilation.
+
+`DEVKITPRO_WII_SETUP` is used later to add compilation flags to the usual variables.
 
 The `PKG_CHECK_MODULES` is used to look up SDL2 using `pkg-config`. Note that its flags
 end up in `SDL2_CFLAGS` and `SDL2_LIBS`.
 
+
 ### [`Makefile.am`](Makefile.am)
 
-The `Makefile.am` is where we use all the `DEVKITPRO_*` variables; in addition, we use the
-`SDL2_*` variables.
+In order to incorporate the `SDL_` variables, we add them to `AM_CPPFLAGS` and `LDADD`.
 
-We want to make a `.dol` file, so we first create a `.elf` binary, and request the `.dol`
-binary (with the same name) to be generated. The rules to make this conversion work are
-imported with the line `@INC_AMINCLUDE@`.
+The program is built as an `.elf` file, that is later converted to `.dol`. The recipe that
+does this conversion is imported using the line `@INC_AMINCLUDE@`.
 
-Lastly, an optional rule is created, to make it more convenient to run the program on the
-Wii (as long as the Homebrew Channel is running), using the `wiiload` utility from
-devkitPro.
+A `run:` target is used to launch the app on the Wii using `wiiload`.

@@ -3,16 +3,14 @@ EXTRA_DIST = \
 	README.md
 
 
-AM_CPPFLAGS = $(DEVKITPRO_CPPFLAGS)
-AM_CXXFLAGS = $(DEVKITPRO_CXXFLAGS)
-AM_LDFLAGS = $(DEVKITPRO_LDFLAGS)
-LIBS = $(DEVKITPRO_LIBS)
+AM_CXXFLAGS = -Wall -Wextra -Werror
 
 
 3DSX_FILE = hello-world.3dsx
 noinst_PROGRAMS = hello-world.elf
 
 hello_world_elf_SOURCES = src/main.cpp
+
 
 all-local: $(3DSX_FILE)
 

@@ -14,6 +14,7 @@ AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_PROG_CXX
 AC_LANG([C++])
 
+DEVKITPRO_WII_SETUP
 PKG_CHECK_MODULES([SDL2], [sdl2])
 
 AC_CONFIG_FILES([Makefile])

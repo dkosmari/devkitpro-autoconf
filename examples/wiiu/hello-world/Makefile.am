@@ -4,15 +4,8 @@ EXTRA_DIST = \
 	README.md
 
 
-# First, we assign the DEVKITPRO_* variables to the AM_* variables.
-AM_CPPFLAGS = $(DEVKITPRO_CPPFLAGS)
-AM_CXXFLAGS = $(DEVKITPRO_CXXFLAGS)
-AM_LDFLAGS = $(DEVKITPRO_LDFLAGS)
-# There's no AM_LIBS, so we use LIBS
-LIBS = $(DEVKITPRO_LIBS)
-
-
 RPX_FILE = hello-world.rpx
+
 # Tip: use noinst_PROGRAMS instead of bin_PROGRAMS, to not have it on `make install'.
 noinst_PROGRAMS = hello-world.elf
 

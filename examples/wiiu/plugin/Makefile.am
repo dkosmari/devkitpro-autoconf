@@ -2,12 +2,6 @@ EXTRA_DIST = \
 	bootstrap \
 	README.md
 
-# Make sure to use all of DEVKITPRO_ flag variables.
-AM_CPPFLAGS = $(DEVKITPRO_CPPFLAGS)
-AM_CXXFLAGS = $(DEVKITPRO_CXXFLAGS)
-AM_LDFLAGS = $(DEVKITPRO_LDFLAGS)
-LIBS = $(DEVKITPRO_LIBS)
-
 
 PLUGIN_FILE = dummy.wps
 
@@ -18,6 +12,10 @@ dummy_elf_SOURCES = src/main.cpp
 
 # Convert .elf to .wps
 all-local: $(PLUGIN_FILE)
+
+
+run: $(PLUGIN_FILE)
+	WIILOAD=tcp:wiiu wiiload $<
 
 
 # Incorporate the extra Makefile rules

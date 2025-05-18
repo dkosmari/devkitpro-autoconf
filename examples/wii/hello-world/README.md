@@ -20,9 +20,12 @@ Automake.
 The `bootstrap` script makes sure the macros are available without needing them
 to be installed in the system.
 
+
 ### [`configure.ac`](configure.ac)
 
-We use the `DEVKITPRO_WII_INIT` macro, that must appear before `AM_INIT_AUTOMAKE`.
+First we call `DEVKITPRO_WII_INIT` to set up paths for the cross compilation.
+
+Later we use `DEVKITPRO_WII_SETUP` to add flags to the compilation variables.
 
 A third-party library, `libgxflux`, is also used, with the `DEVKITPRO_WII_CHECK_LIBGXFLUX`
 macro.
@@ -30,9 +33,8 @@ macro.
 
 ### [`Makefile.am`](Makefile.am)
 
-The `Makefile.am` uses all of the `DEVKITPRO_*` variables in the corresponding Automake
-variables.
+The `Makefile.am` defines an `.elf` program, that will be converted to a `.dol` later.
 
-The output is a `.elf` file that is converted to a `.dol` file in the `all-local` target.
+A `run:` target allows us to launch the app using `wiiload`.
 
-Extra Makefile rules are imported by adding the line `@INC_AMINCLUDE@` to the Makefile.
+The recipe to convert the `.elf` into a `.dol` comes the line `@INC_AMINCLUDE@`.

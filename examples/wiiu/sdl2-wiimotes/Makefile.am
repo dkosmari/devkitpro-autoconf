@@ -10,19 +10,11 @@ WUHB_FILE = $(RPX_FILE:.rpx=.wuhb)
 
 
 
-AM_CPPFLAGS = \
-	$(DEVKITPRO_CPPFLAGS) \
-	$(SDL2_CFLAGS)
+AM_CPPFLAGS = $(SDL2_CFLAGS)
 
-AM_CXXFLAGS = \
-	-Wall -Wextra -Werror \
-	$(DEVKITPRO_CXXFLAGS)
+AM_CXXFLAGS = -Wall -Wextra -Werror
 
-AM_LDFLAGS = $(DEVKITPRO_LDFLAGS)
-
-LIBS = \
-	$(SDL2_LIBS) \
-	$(DEVKITPRO_LIBS)
+LDADD = $(SDL2_LIBS)
 
 
 noinst_PROGRAMS = sdl2-wiimotes.elf
