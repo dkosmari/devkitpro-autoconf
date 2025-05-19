@@ -33,7 +33,9 @@ macro.
 
 ### [`Makefile.am`](Makefile.am)
 
-The `Makefile.am` defines an `.elf` program, that will be converted to a `.dol` later.
+We use the `noinst_PROGRAMS` to define an `.elf` program, that will be converted to a `.dol` later.
+
+Since we need to link against `libgxfluxx.a`, we add `-lgxflux` to `LDADD`.
 
 A `run:` target allows us to launch the app using `wiiload`.
 

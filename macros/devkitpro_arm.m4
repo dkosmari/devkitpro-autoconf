@@ -8,10 +8,11 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 2
+#serial 3
 
 # DEVKITPRO_ARM_INIT
 # ------------------
+#
 # This macro adjuts the environment for ARM-based targets. It must be called before
 # `AM_INIT_AUTOMAKE', and before any cross-compilation tool is checked.
 #
@@ -38,13 +39,7 @@ AC_DEFUN([DEVKITPRO_ARM_INIT],[
 
     # See if we can find cross tools in PATH already; if not, append $DEVKITARM/bin to
     # PATH
-    AC_MSG_CHECKING([if $DEVKITARM/bin is in PATH])
-    AS_IF([! which arm-none-eabi-nm 1>/dev/null 2>/dev/null],
-          [
-              AC_MSG_RESULT([no, will append to PATH])
-              AS_VAR_APPEND([PATH], [:$DEVKITARM/bin])
-          ],
-          [AC_MSG_RESULT([yes])])
+    DEVKITPRO_APPEND_TOOL_PATH([arm-none-eabi-nm], [$DEVKITARM/bin])
 
 ])dnl DEVKITPRO_ARM_INIT
 

@@ -2,6 +2,7 @@ EXTRA_DIST = \
 	bootstrap \
 	README.md
 
+LDADD = -lnotifications
 
 PLUGIN_FILE = dummy.wps
 

@@ -8,7 +8,7 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 3
+#serial 4
 
 # DEVKITPRO_WII_INIT
 # ------------------
@@ -26,7 +26,7 @@ AC_DEFUN([DEVKITPRO_WII_INIT], [
     DEVKITPRO_PPC_INIT
 
     # Ensure $DEVKITPRO/tools/bin is in PATH
-    DEVKITPRO_APPEND_PATH([elf2dol], [$DEVKITPRO/tools/bin])
+    DEVKITPRO_APPEND_TOOL_PATH([elf2dol], [$DEVKITPRO/tools/bin])
 
     AC_CHECK_PROGS([ELF2DOL], [elf2dol])
     AC_CHECK_PROGS([GXTEXCONV], [gxtexconv])
@@ -43,7 +43,8 @@ AC_DEFUN([DEVKITPRO_WII_INIT], [
 
     # Append portlibs/wii/bin and portlibs/ppc/bin to PATH
     # Note: we don't know if any portlibs package is installed or even needed.
-    AS_VAR_APPEND([PATH], [":$DEVKITPRO_PORTLIBS_WII/bin:$DEVKITPRO_PORTLIBS_PPC/bin"])
+    DEVKITPRO_APPEND_PATH([$DEVKITPRO_PORTLIBS_WII/bin])
+    DEVKITPRO_APPEND_PATH([$DEVKITPRO_PORTLIBS_PPC/bin])
 
 ])dnl DEVKITPRO_WII_INIT
 
@@ -80,7 +81,7 @@ AC_DEFUN([DEVKITPRO_WII_SETUP], [
     AS_VAR_SET_IF([DEVKITPRO_LIBOGC], [], [AC_MSG_ERROR([DEVKITPRO_LIBOGC not set.])])
     AS_VAR_SET_IF([DEVKITPRO_PORTLIBS_WII], [], [AC_MSG_ERROR([DEVKITPRO_PORTLIBS_WII not set.])])
 
-    AC_REQUIRE([DEVKITPRO_PPC_SETUP])
+    DEVKITPRO_PPC_SETUP
 
     AX_PREPEND_FLAG([-D__WII__],                         [CPPFLAGS])
     AX_PREPEND_FLAG([-DGEKKO],                           [CPPFLAGS])
@@ -115,7 +116,7 @@ AC_DEFUN([DEVKITPRO_WII_SETUP], [
     AX_PREPEND_FLAG([-L$DEVKITPRO_LIBOGC/lib/wii],   [LIBS])
 
 
-    # custom Makefile rules
+    # custom Makefile recipes
     AX_ADD_AM_MACRO([
 clean: clean-dol
 .PHONY: clean-dol
@@ -138,24 +139,23 @@ clean-tpl:; \$(RM) *.tpl
 # This macro checks for the presence of libfat-ogc.
 #
 # Output variables:
-#   - `LIBS'
 #   - `HAVE_DEVKITPRO_WII_LIBFAT'
+#   - `DEVKITPRO_WII_LIBFAT_LIBS'
 
 AC_DEFUN([DEVKITPRO_WII_CHECK_LIBFAT], [
 
-    AC_REQUIRE([DEVKITPRO_WII_SETUP])
+    AS_VAR_SET_IF([DEVKITPRO_LIBOGC], [], [AC_MSG_ERROR([DEVKITPRO_LIBOGC not set.])])
 
     # Note: libfat-ogc is installed inside DEVKITPRO_LIBOGC already, so we don't need to update
     # the lib path.
-    AX_CHECK_LIBRARY([DEVKITPRO_WII_LIBFAT],
-                     [fat.h],
-                     [fat],
-                     [
-                         AX_PREPEND_FLAG([-lfat], [LIBS])
-                         $1
-                     ],
-                     m4_default([$2],
-                                AC_MSG_ERROR([libfat-ogc not found; install the package with "dkp-pacman -S libfat-ogc"])))
+    DEVKITPRO_CHECK_LIBRARY_FULL([DEVKITPRO_WII_LIBFAT],
+                                 [fat.h],
+                                 [fat],
+                                 [],
+                                 [],
+                                 [$1],
+                                 m4_default([$2],
+                                            AC_MSG_ERROR([libfat-ogc not found; install the package with "dkp-pacman -S libfat-ogc"])))
 
 ])dnl DEVKITPRO_WII_CHECK_LIBFAT
 
@@ -166,23 +166,22 @@ AC_DEFUN([DEVKITPRO_WII_CHECK_LIBFAT], [
 # This macro checks for the presence of libgxflux.
 #
 # Output variables:
-#   - `LIBS'
 #   - `HAVE_DEVKITPRO_WII_LIBGXFLUX'
+#   - `DEVKITPRO_WII_LIBGXFLUX_LIBS'
 
 AC_DEFUN([DEVKITPRO_WII_CHECK_LIBGXFLUX], [
 
-    AC_REQUIRE([DEVKITPRO_WII_SETUP])
+    AS_VAR_SET_IF([DEVKITPRO_LIBOGC], [], [AC_MSG_ERROR([DEVKITPRO_LIBOGC not set.])])
 
     # Note: libgxflux is installed inside DEVKITPRO_LIBOGC already, so we don't need to
     # update the lib path.
-    AX_CHECK_LIBRARY([DEVKITPRO_WII_LIBGXFLUX],
-                     [gxflux/gfx.h],
-                     [gxflux],
-                     [
-                         AX_PREPEND_FLAG([-lgxflux], [LIBS])
-                         $1
-                     ],
-                     m4_default([$2],
-                                [AC_MSG_ERROR([libgxflux not found; install the package with "dkp-pacman -S libgxflux"])]))
+    DEVKITPRO_CHECK_LIBRARY_FULL([DEVKITPRO_WII_LIBGXFLUX],
+                                 [gxflux/gfx.h],
+                                 [gxflux],
+                                 [],
+                                 [],
+                                 [$1],
+                                 m4_default([$2],
+                                            [AC_MSG_ERROR([libgxflux not found; install the package with "dkp-pacman -S libgxflux"])]))
 
 ])dnl DEVKITPRO_WII_CHECK_LIBGXFLUX

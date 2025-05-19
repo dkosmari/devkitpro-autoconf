@@ -19,15 +19,15 @@ upload the file using curl; similarly, `make uninstall` will delete the remote f
 
 ## Explanation
 
-### `bootstrap`
+### [`bootstrap`](bootstrap)
 
-The [`bootstrap`](bootstrap) script makes sure the macros are available without needing
+The `bootstrap` script makes sure the macros are available without needing
 them to be installed in the system.
 
 
-### `configure.ac`
+### [`configure.ac`](configure.ac)
 
-In the [`configure.ac`](configure.ac) we use two macros:
+We use two macros:
 
   - `WIIU_WUMS_MODULE_INIT`: this sets up variables to ensure we use the correct
      compiler/tools from the devkitPro environment, and not from the native environment.

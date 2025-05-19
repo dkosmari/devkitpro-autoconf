@@ -22,22 +22,24 @@ upload the file using curl; similarly, `make uninstall` will delete the remote f
 
 ## Explanation
 
-### `bootstrap`
+### [`bootstrap`](bootstrap)
 
-The [`bootstrap`](bootstrap) script makes sure the macros are available without needing
-them to be installed in the system.
+The `bootstrap` script makes sure the macros are available without needing them to be
+installed in the system.
 
 
-### `configure.ac`
+### [`configure.ac`](configure.ac)
 
-In the [`configure.ac`](configure.ac), we need both WUPS and WUMS environments
+We need both WUPS and WUMS environments
 initialized, using the macros `WIIU_WUPS_INIT` and `WIIU_WUMS_INIT`.
 
 To set up the basic compilation flags for WUPS, we call `WIIU_WUPS_SETUP`.
 
-Linking against the `libnotifications` module we use
-`WIIU_WUMS_CHECK_LIBNOTIFICATIONS`. We could just write `-lnotifications` in the Makefile
-for the linker, but this macros shows a nice error message in case the library is missing.
+We're going to use the WUMS notifications module, so we also need `WIIU_WUMS_SETUP` before
+calling `WIIU_WUMS_CHECK_LIBNOTIFICATIONS`. Optional libraries are not appended to `LIBS`,
+they're stored in their own variables. In this case, it's
+`WIIU_WUMS_LIBNOTIFICATIONS_LIBS`, which just expands to `-lnotifications`. It's up to
+you, if you want to use the full variable name, or hardcode `-lnotifications`.
 
 
 ### `Makefile.am`

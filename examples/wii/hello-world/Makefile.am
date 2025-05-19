@@ -2,6 +2,9 @@ EXTRA_DIST = \
 	bootstrap \
 	README.md
 
+# We know that $(DEVKITPRO_WII_LIBGXFLUX_LIBS) expands to -lgxflux
+LDADD = -lgxflux
+
 # We build a .elf and then convert it to .dol
 DOL_FILE = hello-world.dol
 noinst_PROGRAMS = hello-world.elf
