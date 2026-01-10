@@ -12,9 +12,10 @@ LDADD = $(SDL2_LIBS)
 noinst_PROGRAMS = sdl2-bouncing-box.elf
 
 sdl2_bouncing_box_elf_SOURCES = \
+	src/dump_sdl_event.cpp \
+	src/dump_sdl_event.hpp \
 	src/main.cpp \
-	src/show.cpp \
-	src/show.hpp
+	src/stdout-wiiu.cpp
 
 
 RPX_FILE = sdl2-bouncing-box.rpx

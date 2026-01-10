@@ -42,7 +42,7 @@ const std::array locales{
     "de_DE",
     "it_IT",
     "es_ES",
-    "de_DE",
+    "pt_PT",
     "nl_NL",
     "ru_RU",
     // Japan

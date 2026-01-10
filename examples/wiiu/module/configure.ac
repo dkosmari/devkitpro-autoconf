@@ -7,7 +7,7 @@ AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
 
-WIIU_WUMS_MODULE_INIT
+DEVKITPRO_WUT_INIT
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
@@ -15,7 +15,7 @@ AC_PROG_CXX
 
 AC_LANG([C++])
 
-WIIU_WUMS_MODULE_SETUP
+WIIU_ENV_SETUP_WUMS([external/WiiUModuleSystem])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

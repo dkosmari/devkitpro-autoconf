@@ -2,11 +2,23 @@ EXTRA_DIST = \
 	bootstrap \
 	README.md
 
+
+AM_CPPFLAGS = $(WUMS_CPPFLAGS)
+AM_LDFLAGS  = $(WUMS_LDFLAGS)
+LDADD       = $(WUMS_LIB)
+
+
 # We compile a regular PROGRAMS .elf, then ask it to be converted to .wms later.
 WMS_FILE = dummy.wms
+
 noinst_PROGRAMS = dummy.elf
+
 dummy_elf_SOURCES = src/main.cpp
 
+EXTRA_dummy_elf_DEPENDENCIES = $(WUMS_LIB)
+
+
+# Convert .elf to .wms
 all-local: $(WMS_FILE)
 
 

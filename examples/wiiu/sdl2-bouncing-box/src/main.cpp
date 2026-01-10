@@ -1,11 +1,13 @@
+#include <iostream>
+
 #include <SDL.h>
 #include <SDL_mixer.h>
 
-#include <sysapp/launch.h>
-#include <whb/log.h>
-#include <whb/log_udp.h>
+#include "dump_sdl_event.hpp"
 
-#include "show.hpp"
+
+using std::cout;
+using std::endl;
 
 
 int main()
@@ -15,22 +17,19 @@ int main()
     Mix_Chunk* bonk = nullptr;
     int status = 0;
 
-    constexpr int screen_width = 854;
-    constexpr int screen_height = 480;
-
-    WHBLogUdpInit();
-
+    constexpr int screen_width = 1280;
+    constexpr int screen_height = 720;
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_AUDIO) < 0) {
-        WHBLogPrintf("Failed to init SDL: %s\n", SDL_GetError());
+        cout << "Failed to init SDL: " << SDL_GetError() << endl;
         status = -1;
-        goto error_stop_log_udp;
+        goto error_end_program;
     }
 
     Mix_Init(0);
 
     if (Mix_OpenAudio(48000, AUDIO_S16SYS, 2, 4096) == -1) {
-        WHBLogPrintf("Failed to open audio: %s\n", SDL_GetError());
+        cout << "Failed to open audio: " << SDL_GetError() << endl;
         status = -2;
         goto error_quit_sdl;
     }
@@ -41,15 +40,15 @@ int main()
                            screen_width, screen_height,
                            SDL_WINDOW_FULLSCREEN);
     if (!win) {
-        WHBLogPrintf("Failed to create window: %s\n", SDL_GetError());
+        cout << "Failed to create window: " << SDL_GetError() << endl;
         status = -3;
-        goto error_close_audio;
+        goto error_close_mixer;
     }
 
     ren = SDL_CreateRenderer(win, -1,
                              SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (!ren) {
-        WHBLogPrintf("Failed to create renderer: %s\n", SDL_GetError());
+        cout << "Failed to create renderer: " << SDL_GetError() << endl;
         status = -4;
         goto error_destroy_window;
     }
@@ -57,7 +56,7 @@ int main()
     // Load asset from the .wuhb
     bonk = Mix_LoadWAV("/vol/content/bonk.wav");
     if (!bonk)
-        WHBLogPrintf("Failed to load bonk.wav: %s\n", Mix_GetError());
+        cout << "Failed to load bonk.wav: " << Mix_GetError() << endl;
 
 
     {
@@ -76,46 +75,41 @@ int main()
         SDL_RenderSetLogicalSize(ren, screen_width, screen_height);
 
         bool running = true;
-        bool quitting = false; // avoid requesting another quit event.
         while (running) {
             SDL_Event e;
             while (SDL_PollEvent(&e)) {
-                show(e);
+                dump_sdl_event(e);
                 switch (e.type) {
-                case SDL_QUIT:
-                    WHBLogPrintf("Handling SDL_QUIT\n");
-                    running = false;
-                    quitting = true;
-                    break;
-                case SDL_CONTROLLERBUTTONDOWN:
-                    switch (e.cbutton.button) {
-                    case SDL_CONTROLLER_BUTTON_B:
-                    case SDL_CONTROLLER_BUTTON_START:
-                        if (!quitting) {
-                            SYSLaunchMenu(); // causes a SDL_QUIT to be sent.
-                            quitting = true;
+                    case SDL_QUIT:
+                        cout << "Handling SDL_QUIT" << endl;
+                        running = false;
+                        break;
+                    case SDL_CONTROLLERBUTTONDOWN:
+                        switch (e.cbutton.button) {
+                            case SDL_CONTROLLER_BUTTON_B:
+                            case SDL_CONTROLLER_BUTTON_START:
+                                running = false;
+                                break;
                         }
                         break;
-                    }
-                    break;
-                case SDL_CONTROLLERDEVICEADDED:
-                    {
-                        auto c = SDL_GameControllerOpen(e.cdevice.which);
-                        WHBLogPrintf("Added controller %d: %s\n",
-                                     e.cdevice.which,
-                                     SDL_GameControllerName(c));
-                    }
-                    break;
-                case SDL_CONTROLLERDEVICEREMOVED:
-                    {
-                        auto c = SDL_GameControllerFromInstanceID(e.cdevice.which);
-                        WHBLogPrintf("Removed controller: %s\n",
-                                     SDL_GameControllerName(c));
-                        SDL_GameControllerClose(c);
-                    }
-                    break;
+                    case SDL_CONTROLLERDEVICEADDED:
+                        {
+                            auto c = SDL_GameControllerOpen(e.cdevice.which);
+                            cout << "Added controller: " << SDL_GameControllerName(c) << endl;
+                        }
+                        break;
+                    case SDL_CONTROLLERDEVICEREMOVED:
+                        {
+                            auto c = SDL_GameControllerFromInstanceID(e.cdevice.which);
+                            cout << "Removed controller: " << SDL_GameControllerName(c) << endl;
+                            SDL_GameControllerClose(c);
+                        }
+                        break;
                 }
             }
+
+            if (!running)
+                break;
 
             px += vx;
             py += vy;
@@ -131,8 +125,11 @@ int main()
                 bounced = true;
             }
 
-            if (bounced && bonk)
-                Mix_PlayChannel(-1, bonk, 0);
+            if (bounced) {
+                if (bonk)
+                    Mix_PlayChannel(-1, bonk, 0);
+                cout << "bonk" << endl;
+            }
 
             // TODO: add some randomness to vx/vy after every bounce
 
@@ -149,19 +146,17 @@ int main()
         }
     }
 
-    WHBLogPrintf("Shutting down\n");
+    cout << "Shutting down" << endl;
 
     Mix_FreeChunk(bonk); // bonk might be null, but it's harmless
     SDL_DestroyRenderer(ren);
  error_destroy_window:
     SDL_DestroyWindow(win);
- error_close_audio:
+ error_close_mixer:
     Mix_CloseAudio();
  error_quit_sdl:
     Mix_Quit();
     SDL_Quit();
- error_stop_log_udp:
-    WHBLogUdpDeinit();
-
+ error_end_program:
     return status;
 }

@@ -1,40 +1,40 @@
-#include <whb/log.h>
+#include <stdio.h>
 
-#include "show.hpp"
+#include "dump_sdl_event.hpp"
 
 
 void
-show(const SDL_AudioDeviceEvent& e)
+dump_sdl_event(const SDL_AudioDeviceEvent& e)
 {
     const char* type = e.type == SDL_AUDIODEVICEADDED ? "added" : "removed";
-    WHBLogPrintf("AudioDeviceEvent: type=%s, which=%u, iscapture=%u\n",
-                 type, e.which, unsigned{e.iscapture});
+    printf("AudioDeviceEvent: type=%s, which=%u, iscapture=%u\n",
+           type, e.which, unsigned{e.iscapture});
 }
 
 
 void
-show(const SDL_ControllerAxisEvent& e)
+dump_sdl_event(const SDL_ControllerAxisEvent& e)
 {
-    WHBLogPrintf("ControllerAxisEvent: which=%d axis=%u value=%d\n",
-                 e.which, unsigned{e.axis}, int{e.value});
+    printf("ControllerAxisEvent: which=%d axis=%u value=%d\n",
+           e.which, unsigned{e.axis}, int{e.value});
 }
 
 
 void
-show(const SDL_ControllerButtonEvent& e)
+dump_sdl_event(const SDL_ControllerButtonEvent& e)
 {
     const char* state = e.state == SDL_PRESSED ? "pressed" : "released";
 
     auto b = static_cast<SDL_GameControllerButton>(e.button);
     const char* button = SDL_GameControllerGetStringForButton(b);
 
-    WHBLogPrintf("ControllerButtonEvent: which=%d, button=%s, state=%s\n",
-                 int{e.which}, button, state);
+    printf("ControllerButtonEvent: which=%d, button=%s, state=%s\n",
+           int{e.which}, button, state);
 }
 
 
 void
-show(const SDL_ControllerDeviceEvent& e)
+dump_sdl_event(const SDL_ControllerDeviceEvent& e)
 {
     const char* type = "invalid";
     switch (e.type) {
@@ -48,13 +48,13 @@ show(const SDL_ControllerDeviceEvent& e)
         type = "remapped";
         break;
     }
-    WHBLogPrintf("ControllerDeviceEvent: type=%s, which=%d\n",
-                 type, int{e.which});
+    printf("ControllerDeviceEvent: type=%s, which=%d\n",
+           type, int{e.which});
 }
 
 
 void
-show(const SDL_ControllerSensorEvent& e)
+dump_sdl_event(const SDL_ControllerSensorEvent& e)
 {
     const char* sensor = "invalid";
     switch (e.sensor) {
@@ -80,13 +80,13 @@ show(const SDL_ControllerSensorEvent& e)
         sensor = "gyro-r";
         break;
     }
-    WHBLogPrintf("ControllerSensorEvent: which=%d, sensor=%s\n",
-                 int{e.which}, sensor);
+    printf("ControllerSensorEvent: which=%d, sensor=%s\n",
+           int{e.which}, sensor);
 }
 
 
 void
-show(const SDL_ControllerTouchpadEvent& e)
+dump_sdl_event(const SDL_ControllerTouchpadEvent& e)
 {
     const char* type = "invalid";
     switch (e.type) {
@@ -100,14 +100,14 @@ show(const SDL_ControllerTouchpadEvent& e)
         type = "up";
         break;
     }
-    WHBLogPrintf("ControllerTouchpadEvent: type=%s, which=%d, touchpad=%d,"
-                 " x=%f, y=%f, pressure=%f\n",
-                 type, int{e.which}, e.touchpad, e.x, e.y, e.pressure);
+    printf("ControllerTouchpadEvent: type=%s, which=%d, touchpad=%d,"
+           " x=%f, y=%f, pressure=%f\n",
+           type, int{e.which}, e.touchpad, e.x, e.y, e.pressure);
 }
 
 
 void
-show(const SDL_DisplayEvent& e)
+dump_sdl_event(const SDL_DisplayEvent& e)
 {
     const char* event = "invalid";
     switch (e.event) {
@@ -121,29 +121,29 @@ show(const SDL_DisplayEvent& e)
         event = "disconnected";
         break;
     }
-    WHBLogPrintf("DisplayEvent: display=%d, event=%s\n",
-                 e.display, event);
+    printf("DisplayEvent: display=%d, event=%s\n",
+           e.display, event);
 }
 
 
 void
-show(const SDL_JoyAxisEvent& e)
+dump_sdl_event(const SDL_JoyAxisEvent& e)
 {
-    WHBLogPrintf("JoyAxisEvent: which=%d, axis=%u, value=%d\n",
-                 int{e.which}, unsigned{e.axis}, e.value);
+    printf("JoyAxisEvent: which=%d, axis=%u, value=%d\n",
+           int{e.which}, unsigned{e.axis}, e.value);
 }
 
 
 void
-show(const SDL_JoyBallEvent& e)
+dump_sdl_event(const SDL_JoyBallEvent& e)
 {
-    WHBLogPrintf("JoyBallEvent: which=%d, ball=%u, xrel=%d, yrel=%d\n",
-                 int{e.which}, unsigned{e.ball}, int{e.xrel}, int{e.yrel});
+    printf("JoyBallEvent: which=%d, ball=%u, xrel=%d, yrel=%d\n",
+           int{e.which}, unsigned{e.ball}, int{e.xrel}, int{e.yrel});
 }
 
 
 void
-show(const SDL_JoyBatteryEvent& e)
+dump_sdl_event(const SDL_JoyBatteryEvent& e)
 {
     const char* level;
     switch (e.level) {
@@ -165,31 +165,31 @@ show(const SDL_JoyBatteryEvent& e)
     default:
         level = "invalid";
     }
-    WHBLogPrintf("JoyBatteryEvent: which=%d, level=%s\n",
-                 e.which, level);
+    printf("JoyBatteryEvent: which=%d, level=%s\n",
+           e.which, level);
 }
 
 
 void
-show(const SDL_JoyButtonEvent& e)
+dump_sdl_event(const SDL_JoyButtonEvent& e)
 {
     const char* state = e.state == SDL_PRESSED ? "pressed" : "released";
-    WHBLogPrintf("JoyButtonEvent: which=%d, button=%u, state=%s\n",
-                 int{e.which}, unsigned{e.button}, state);
+    printf("JoyButtonEvent: which=%d, button=%u, state=%s\n",
+           int{e.which}, unsigned{e.button}, state);
 }
 
 
 void
-show(const SDL_JoyDeviceEvent& e)
+dump_sdl_event(const SDL_JoyDeviceEvent& e)
 {
     const char* type = e.type == SDL_JOYDEVICEADDED ? "added" : "removed";
-    WHBLogPrintf("JoyDeviceEvent: type=%s, which=%d\n",
-                 type, e.which);
+    printf("JoyDeviceEvent: type=%s, which=%d\n",
+           type, e.which);
 }
 
 
 void
-show(const SDL_JoyHatEvent& e)
+dump_sdl_event(const SDL_JoyHatEvent& e)
 {
     const char* value = "invalid";
     switch (e.value) {
@@ -221,51 +221,51 @@ show(const SDL_JoyHatEvent& e)
         value = "leftdown";
         break;
     }
-    WHBLogPrintf("JoyHatEvent: which=%d, hat=%u, value=%s\n",
+    printf("JoyHatEvent: which=%d, hat=%u, value=%s\n",
                  int{e.which}, unsigned{e.hat}, value);
 }
 
 
 void
-show(const SDL_MouseButtonEvent& e)
+dump_sdl_event(const SDL_MouseButtonEvent& e)
 {
     const char* state = e.state == SDL_PRESSED ? "pressed" : "released";
-    WHBLogPrintf("MouseButtonEvent: windowID=%x, which=%u, button=%u,"
-                 " state=%s, clicks=%u. x=%d, y=%d\n",
-                 e.windowID, e.which, unsigned{e.button}, state,
-                 unsigned{e.clicks}, e.x, e.y);
+    printf("MouseButtonEvent: windowID=%x, which=%u, button=%u,"
+           " state=%s, clicks=%u. x=%d, y=%d\n",
+           e.windowID, e.which, unsigned{e.button}, state,
+           unsigned{e.clicks}, e.x, e.y);
 }
 
 void
-show(const SDL_MouseMotionEvent& e)
+dump_sdl_event(const SDL_MouseMotionEvent& e)
 {
-    WHBLogPrintf("MouseMotionEvent: windowID=%x, which=%u, state=%x, x=%d, y=%d,"
-                 " xrel=%d, yrel=%d\n",
-                 e.windowID, e.which, e.state, e.x, e.y, e.xrel, e.yrel);
+    printf("MouseMotionEvent: windowID=%x, which=%u, state=%x, x=%d, y=%d,"
+           " xrel=%d, yrel=%d\n",
+           e.windowID, e.which, e.state, e.x, e.y, e.xrel, e.yrel);
 }
 
 
 void
-show(const SDL_MouseWheelEvent& e)
+dump_sdl_event(const SDL_MouseWheelEvent& e)
 {
     const char* direction = e.direction == SDL_MOUSEWHEEL_NORMAL ? "normal" : "flipped";
 
-    WHBLogPrintf("MouseWheelEvent: windowID=%x, which=%u, direction=%s,"
-                 " x=%d, y=%d, preciseX=%f, preciseY=%f, mouseX=%d, mouseY=%d\n",
-                 e.windowID, e.which, direction,
-                 e.x, e.y, e.preciseX, e.preciseY, e.mouseX, e.mouseY);
+    printf("MouseWheelEvent: windowID=%x, which=%u, direction=%s,"
+           " x=%d, y=%d, preciseX=%f, preciseY=%f, mouseX=%d, mouseY=%d\n",
+           e.windowID, e.which, direction,
+           e.x, e.y, e.preciseX, e.preciseY, e.mouseX, e.mouseY);
 }
 
 
 void
-show(const SDL_QuitEvent&)
+dump_sdl_event(const SDL_QuitEvent&)
 {
-    WHBLogPrintf("QuitEvent\n");
+    printf("QuitEvent\n");
 }
 
 
 void
-show(const SDL_TouchFingerEvent& e)
+dump_sdl_event(const SDL_TouchFingerEvent& e)
 {
     const char* type;
     switch (e.type) {
@@ -281,15 +281,15 @@ show(const SDL_TouchFingerEvent& e)
     default:
         type = "invalid";
     }
-    WHBLogPrintf("TouchFingerEvent: type=%s, touchID=%lld, fingerID=%lld,"
-                 " x=%f, y=%f, dx=%f, dy=%f, pressure=%f, windowID=%u\n",
-                 type, e.touchId, e.fingerId,
-                 e.x, e.y, e.dx, e.dy, e.pressure, e.windowID);
+    printf("TouchFingerEvent: type=%s, touchID=%lld, fingerID=%lld,"
+           " x=%f, y=%f, dx=%f, dy=%f, pressure=%f, windowID=%u\n",
+           type, e.touchId, e.fingerId,
+           e.x, e.y, e.dx, e.dy, e.pressure, e.windowID);
 }
 
 
 void
-show(const SDL_WindowEvent& e)
+dump_sdl_event(const SDL_WindowEvent& e)
 {
     const char* event = "invalid";
     switch (e.event) {
@@ -348,8 +348,8 @@ show(const SDL_WindowEvent& e)
         event = "display-changed";
         break;
     }
-    WHBLogPrintf("WindowEvent: windowID=%x, event=%s\n",
-                 e.windowID, event);
+    printf("WindowEvent: windowID=%x, event=%s\n",
+           e.windowID, event);
 }
 
 
@@ -360,12 +360,12 @@ show(const SDL_WindowEvent& e)
         break
 
 void
-show(const SDL_Event& e)
+dump_sdl_event(const SDL_Event& e)
 {
     const char* name = nullptr;
     switch (e.type) {
     case SDL_QUIT:
-        show(e.quit);
+        dump_sdl_event(e.quit);
         break;
 
         CASE(SDL_APP_TERMINATING);
@@ -378,10 +378,10 @@ show(const SDL_Event& e)
         CASE(SDL_LOCALECHANGED);
 
     case SDL_DISPLAYEVENT:
-        show(e.display);
+        dump_sdl_event(e.display);
         break;
     case SDL_WINDOWEVENT:
-        show(e.window);
+        dump_sdl_event(e.window);
         break;
 
         CASE(SDL_SYSWMEVENT);
@@ -393,60 +393,60 @@ show(const SDL_Event& e)
         CASE(SDL_TEXTEDITING_EXT);
 
     case SDL_MOUSEMOTION:
-        show(e.motion);
+        dump_sdl_event(e.motion);
         break;
     case SDL_MOUSEBUTTONDOWN:
     case SDL_MOUSEBUTTONUP:
-        show(e.button);
+        dump_sdl_event(e.button);
         break;
     case SDL_MOUSEWHEEL:
-        show(e.wheel);
+        dump_sdl_event(e.wheel);
         break;
 
     case SDL_JOYAXISMOTION:
-        show(e.jaxis);
+        dump_sdl_event(e.jaxis);
         break;
     case SDL_JOYBALLMOTION:
-        show(e.jball);
+        dump_sdl_event(e.jball);
         break;
     case SDL_JOYHATMOTION:
-        show(e.jhat);
+        dump_sdl_event(e.jhat);
         break;
     case SDL_JOYBUTTONDOWN:
     case SDL_JOYBUTTONUP:
-        show(e.jbutton);
+        dump_sdl_event(e.jbutton);
         break;
     case SDL_JOYDEVICEADDED:
     case SDL_JOYDEVICEREMOVED:
-        show(e.jdevice);
+        dump_sdl_event(e.jdevice);
         break;
     case SDL_JOYBATTERYUPDATED:
-        show(e.jbattery);
+        dump_sdl_event(e.jbattery);
         break;
     case SDL_CONTROLLERAXISMOTION:
-        show(e.caxis);
+        dump_sdl_event(e.caxis);
         break;
     case SDL_CONTROLLERBUTTONDOWN:
     case SDL_CONTROLLERBUTTONUP:
-        show(e.cbutton);
+        dump_sdl_event(e.cbutton);
         break;
     case SDL_CONTROLLERDEVICEADDED:
     case SDL_CONTROLLERDEVICEREMOVED:
     case SDL_CONTROLLERDEVICEREMAPPED:
-        show(e.cdevice);
+        dump_sdl_event(e.cdevice);
         break;
     case SDL_CONTROLLERTOUCHPADDOWN:
     case SDL_CONTROLLERTOUCHPADMOTION:
     case SDL_CONTROLLERTOUCHPADUP:
-        show(e.ctouchpad);
+        dump_sdl_event(e.ctouchpad);
         break;
     case SDL_CONTROLLERSENSORUPDATE:
-        show(e.csensor);
+        dump_sdl_event(e.csensor);
         break;
     case SDL_FINGERDOWN:
     case SDL_FINGERUP:
     case SDL_FINGERMOTION:
-        show(e.tfinger);
+        dump_sdl_event(e.tfinger);
         break;
 
         CASE(SDL_DOLLARGESTURE);
@@ -460,7 +460,7 @@ show(const SDL_Event& e)
 
     case SDL_AUDIODEVICEADDED:
     case SDL_AUDIODEVICEREMOVED:
-        show(e.adevice);
+        dump_sdl_event(e.adevice);
         break;
 
         CASE(SDL_SENSORUPDATE);
@@ -472,7 +472,7 @@ show(const SDL_Event& e)
         name = "unknown";
     }
     if (name)
-        WHBLogPrintf("Event: %s\n", name);
+        printf("Event: %s\n", name);
 }
 
 #undef CASE

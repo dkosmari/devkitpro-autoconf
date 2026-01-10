@@ -77,13 +77,11 @@ namespace sdl {
     // Convenience exception class that obtains description from `SDL_GetError()`.
     struct error : std::runtime_error{
 
-    error(const std::string& msg) :
-        std::runtime_error{msg + ": "s + SDL_GetError()}
-    {}
+        error(const std::string& msg) :
+            std::runtime_error{msg + ": "s + SDL_GetError()}
+        {}
 
     };
-
-
 
 
     // RAII class for SDL_Init()/SDL_Quit()
@@ -639,23 +637,25 @@ struct Button {
 
 
     bool
-    handle_event(const SDL_Event& e, int win_w, int win_h)
+    handle_event(const SDL_Event& e)
     {
         switch (e.type) {
 
-            case SDL_FINGERDOWN:
-                if (is_inside(e.tfinger.x * win_w, e.tfinger.y * win_h))
+            case SDL_MOUSEBUTTONDOWN:
+                if (is_inside(e.button.x, e.button.y))
                     click_started = true;
                 // TODO: change rendering when click_started
                 return click_started;
 
-            case SDL_FINGERUP:
-                if (!is_inside(e.tfinger.x * win_w, e.tfinger.y * win_h)) {
+            case SDL_MOUSEBUTTONUP:
+                if (!is_inside(e.button.x, e.button.y)) {
                     click_started = false;
                     return false;
                 }
-                if (click_started && on_click)
+                if (click_started && on_click) {
+                    cout << "Button calling on_click callback." << endl;
                     on_click();
+                }
                 click_started = false;
                 return true;
 
@@ -825,24 +825,28 @@ struct App {
     {
         switch (event.type) {
 
-            case SDL_QUIT:
-                running = false;
-                break;
+        case SDL_QUIT:
+            cout << "Quitting..." << endl;
+            running = false;
+            break;
 
-            case SDL_CONTROLLERDEVICEADDED:
-                SDL_GameControllerOpen(event.cdevice.which);
-                break;
+        case SDL_CONTROLLERDEVICEADDED: {
+            auto c = SDL_GameControllerOpen(event.cdevice.which);
+            cout << "Added controller : " << SDL_GameControllerName(c) << endl;
+            break;
+        }
 
-            case SDL_CONTROLLERDEVICEREMOVED:
-                if (auto ctrlr = SDL_GameControllerFromInstanceID(event.cdevice.which))
-                    SDL_GameControllerClose(ctrlr);
-                break;
+        case SDL_CONTROLLERDEVICEREMOVED:
+            if (auto ctrlr = SDL_GameControllerFromInstanceID(event.cdevice.which))
+                SDL_GameControllerClose(ctrlr);
+            break;
 
-            case SDL_FINGERDOWN:
-            case SDL_FINGERUP:
-                for (auto& b : buttons)
-                    b.handle_event(event, window_width, window_height);
-                break;
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP:
+            cout << "Mouse at " << event.button.x << " , " << event.button.y << endl;
+            for (auto& b : buttons)
+                b.handle_event(event);
+            break;
 
         }
     }

@@ -9,6 +9,6 @@ dist_aclocal_DATA = \
 	devkitpro_ppc.m4 \
 	devkitpro_wii.m4 \
 	devkitpro_wut.m4 \
-	wiiu_wums.m4 \
-	wiiu_wups.m4
+	wiiu_env_wums.m4 \
+	wiiu_env_wups.m4
 

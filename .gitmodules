@@ -1,0 +1,9 @@
+[submodule "examples/wiiu/module/external/WiiUModuleSystem"]
+	path = examples/wiiu/module/external/WiiUModuleSystem
+	url = https://github.com/wiiu-env/WiiUModuleSystem.git
+[submodule "examples/wiiu/plugin/external/libnotifications"]
+	path = examples/wiiu/plugin/external/libnotifications
+	url = https://github.com/wiiu-env/libnotifications.git
+[submodule "examples/wiiu/plugin/external/WiiUPluginSystem"]
+	path = examples/wiiu/plugin/external/WiiUPluginSystem
+	url = https://github.com/wiiu-env/WiiUPluginSystem.git

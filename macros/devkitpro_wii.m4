@@ -2,7 +2,7 @@
 # devkitpro_wii.m4 - Macros to handle Wii setup.
 # URL: https://github.com/dkosmari/devkitpro-autoconf/
 
-# Copyright (c) 2025 Daniel K. O. <dkosmari>
+# Copyright (c) 2025-2026 Daniel K. O. <dkosmari>
 #
 # Copying and distribution of this file, with or without modification, are permitted in
 # any medium without royalty provided the copyright notice and this notice are
@@ -118,15 +118,27 @@ AC_DEFUN([DEVKITPRO_WII_SETUP], [
 
     # custom Makefile recipes
     AX_ADD_AM_MACRO([
-clean: clean-dol
+
 .PHONY: clean-dol
-clean-dol:; \$(RM) *.dol
-%.dol: %.strip.elf; \$(ELF2DOL) \$< \$[@]
+
+clean: clean-dol
+
+clean-dol:
+	\$(RM) *.dol
+
+%.dol: %.strip.elf
+	\$(ELF2DOL) \$< \$[@]
+
+.PHONY: clean-tpl
 
 clean: clean-tpl
-.PHONY: clean-tpl
-clean-tpl:; \$(RM) *.tpl
-%.tpl: %.scf; \$(GXTEXCONV) -s \$< -o \$[@]
+
+clean-tpl:
+	\$(RM) *.tpl
+
+%.tpl: %.scf
+	\$(GXTEXCONV) -s \$< -o \$[@]
+
 ])
 
 ])dnl DEVKITPRO_WII_SETUP
