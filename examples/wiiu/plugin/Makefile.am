@@ -3,6 +3,13 @@ EXTRA_DIST = \
 	README.md
 
 
+SUBDIRS = \
+	external/libnotifications \
+	external/WiiUPluginSystem
+
+DIST_SUBDIRS =
+
+
 AM_CPPFLAGS = \
 	$(LIBNOTIFICATIONS_CPPFLAGS) \
 	$(WUPS_CPPFLAGS)
@@ -31,8 +38,21 @@ EXTRA_dummy_elf_DEPENDENCIES = \
 all-local: $(WPS_FILE)
 
 
+.PHONY: run
+
+
 run: $(WPS_FILE)
 	WIILOAD=tcp:wiiu wiiload $<
+
+
+.PHONY: wiiu-install wiiu-uninstall
+
+# Use `make install-wiiu' to send it straight to the Aroma plugins folder through ftpiiu
+wiiu-install: $(WPS_FILE)
+	curl "ftp://wiiu:/fs/vol/external01/wiiu/environments/aroma/plugins/" --upload-file $<
+
+wiiu-uninstall:
+	curl "ftp://wiiu" --quote "DELE /fs/vol/external01/wiiu/environments/aroma/plugins/$(WPS_FILE)"
 
 
 # Incorporate the extra Makefile rules
@@ -42,10 +62,3 @@ run: $(WPS_FILE)
 # Delete `aminclude.am' during `make distclean'
 DISTCLEANFILES = $(AMINCLUDE)
 
-
-# Use `make install' to send it straight to the Aroma plugins folder through ftpiiu
-install-exec-local: $(WPS_FILE)
-	curl "ftp://wiiu:/fs/vol/external01/wiiu/environments/aroma/plugins/" --upload-file $<
-
-uninstall-local:
-	curl "ftp://wiiu" --quote "DELE /fs/vol/external01/wiiu/environments/aroma/plugins/$(WPS_FILE)"

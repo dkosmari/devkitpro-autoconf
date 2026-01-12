@@ -49,7 +49,7 @@ clean: clean-wiiu-env-$1
 clean-wiiu-env-$1:
 	-\$([AM_V_at])\$(MAKE) \$(AM_MAKEFLAGS) -C \$($1_DIR) clean V=\$V
 
-\$($1_LIB):
+${$1_LIB}:
 	-\$([AM_V_at])\$(MAKE) \$(AM_MAKEFLAGS) -C \$($1_DIR) V=\$V
 
 ])

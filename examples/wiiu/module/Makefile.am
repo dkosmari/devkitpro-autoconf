@@ -3,6 +3,11 @@ EXTRA_DIST = \
 	README.md
 
 
+SUBDIRS = external/WiiUModuleSystem
+
+DIST_SUBDIRS =
+
+
 AM_CPPFLAGS = $(WUMS_CPPFLAGS)
 AM_LDFLAGS  = $(WUMS_LDFLAGS)
 LDADD       = $(WUMS_LIB)
@@ -22,12 +27,14 @@ EXTRA_dummy_elf_DEPENDENCIES = $(WUMS_LIB)
 all-local: $(WMS_FILE)
 
 
-# Use make install to copy it to the Wii U
-install-exec-local: $(WMS_FILE)
+.PHONY: wiiu-install wiiu-uninstall
+
+# Use make wiiu-install to copy it to the Wii U
+wiiu-install: $(WMS_FILE)
 	curl "ftp://wiiu:/fs/vol/external01/wiiu/environments/aroma/modules/" --upload-file $<
 
-# Use make uninstall to delete it from the Wii U
-uninstall-local:
+# Use make wiiu-uninstall to delete it from the Wii U
+wiiu-uninstall:
 	curl "ftp://wiiu" --quote "DELE /fs/vol/external01/wiiu/environments/aroma/modules/$(WMS_FILE)"
 
 

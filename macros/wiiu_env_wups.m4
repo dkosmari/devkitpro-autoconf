@@ -45,6 +45,10 @@ AC_DEFUN([WIIU_ENV_SETUP_WUPS],[
     AS_VAR_SET([WUPS_LIB], ["${WUPS_DIR}/lib/libwups.a"])
     AC_SUBST([WUPS_LIB])
 
+    AC_ARG_VAR([WUPS_DEBUG_LIB], [relative path to the WUPS debug library])
+    AS_VAR_SET([WUPS_DEBUG_LIB], ["${WUPS_DIR}/lib/libwupsd.a"])
+    AC_SUBST([WUPS_DEBUG_LIB])
+
     m4_pattern_allow([AM_V_at])
 
     # Makefile rules for building .wps plugins
@@ -64,8 +68,11 @@ clean-wps:
 
     # Makefile rule for building and cleaning WUPS
     AX_ADD_AM_MACRO([
-\$(WUPS_LIB):
+$WUPS_LIB:
 	-\$([AM_V_at])\$(MAKE) \$(AM_MAKEFLAGS) -C \$(WUPS_DIR) lib/libwups.a
+
+$WUPS_DEBUG_LIB:
+	-\$([AM_V_at])\$(MAKE) \$(AM_MAKEFLAGS) -C \$(WUPS_DIR) lib/libwupsd.a
 
 .PHONY: clean-wiiu-env-WUPS
 

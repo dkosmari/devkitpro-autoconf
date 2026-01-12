@@ -45,6 +45,10 @@ AC_DEFUN([WIIU_ENV_SETUP_WUMS],[
     AS_VAR_SET([WUMS_LIB], ["${WUMS_DIR}/lib/libwums.a"])
     AC_SUBST([WUMS_LIB])
 
+    AC_ARG_VAR([WUMS_DEBUG_LIB], [relative path to the WUMS debug library])
+    AS_VAR_SET([WUMS_DEBUG_LIB], ["${WUMS_DIR}/lib/libwumsd.a"])
+    AC_SUBST([WUMS_DEBUG_LIB])
+
     m4_pattern_allow([AM_V_at])
 
     # Makefile rules for building .wms modules
@@ -64,8 +68,11 @@ clean-wms:
 
     # Makefile rule for building and cleaning WUMS
     AX_ADD_AM_MACRO([
-\$(WUMS_LIB):
+$WUMS_LIB:
 	-\$([AM_V_at])\$(MAKE) \$(AM_MAKEFLAGS) -C \$(WUMS_DIR) lib/libwums.a
+
+$WUMS_DEBUG_LIB:
+	-\$([AM_V_at])\$(MAKE) \$(AM_MAKEFLAGS) -C \$(WUMS_DIR) lib/libwumsd.a
 
 .PHONY: clean-wiiu-env-WUMS
 
