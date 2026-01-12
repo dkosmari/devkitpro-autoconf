@@ -6,6 +6,8 @@ EXTRA_DIST = \
 
 AM_CPPFLAGS = $(SDL2_CFLAGS)
 
+AM_CXXFLAGS = -Wall -Wextra -Werror
+
 LDADD = $(SDL2_LIBS)
 
 

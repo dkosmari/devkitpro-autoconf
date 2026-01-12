@@ -84,6 +84,7 @@ int main()
                         cout << "Handling SDL_QUIT" << endl;
                         running = false;
                         break;
+
                     case SDL_CONTROLLERBUTTONDOWN:
                         switch (e.cbutton.button) {
                             case SDL_CONTROLLER_BUTTON_B:
@@ -92,6 +93,29 @@ int main()
                                 break;
                         }
                         break;
+
+                    case SDL_KEYDOWN:
+                        switch (e.key.keysym.sym) {
+                            case SDLK_q:
+                                // quit app with CTRL+Q
+                                if (e.key.keysym.mod & KMOD_CTRL)
+                                    running = false;
+                                break;
+
+                            case SDLK_F4:
+                                // quit app with ALT+F4
+                                if (e.key.keysym.mod & KMOD_ALT)
+                                    running = false;
+                                break;
+
+                            case SDLK_ESCAPE:
+                                // quit app with ESC
+                                running = false;
+                                break;
+
+                        }
+                        break;
+
                     case SDL_CONTROLLERDEVICEADDED:
                         {
                             auto c = SDL_GameControllerOpen(e.cdevice.which);
