@@ -39,6 +39,8 @@ $(WUHB_FILE): $(RPX_FILE)
 all-local: $(WUHB_FILE)
 
 
+PHONY = run
+
 # Also use the `run' target to run it.
 run: $(WUHB_FILE)
 	WIILOAD=tcp:wiiu wiiload $<
