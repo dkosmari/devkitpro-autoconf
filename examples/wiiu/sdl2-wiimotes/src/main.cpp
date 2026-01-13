@@ -9,14 +9,9 @@
 #include <thread>
 #include <vector>
 
-#include <sys/iosupport.h>      // devoptab_list, devoptab_t
-
 #include <coreinit/memory.h>    // OSGetSharedData()
 #include <padscore/kpad.h>
 #include <vpadbase/base.h>      // VPADBASESetSensorBarSetting()
-
-#include <whb/log.h>
-#include <whb/log_module.h>
 
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -38,48 +33,9 @@ using std::cout;
 using std::endl;
 
 
+// TODO: these are not in WUT yet.
 extern "C" void KPADSetPosPlayMode(KPADChan channel, BOOL mode);
 extern "C" void KPADSetPosParam(KPADChan channel, float radius, float sensitivity);
-
-
-// These functions connect STDOUT to the WHBLog*() API.
-
-ssize_t
-write_msg_to_whb_log(struct _reent*,
-                     void*,
-                     const char* buf,
-                     size_t len)
-    noexcept
-{
-    try {
-        std::string msg(buf, len);
-        WHBLogWrite(msg.data());
-        return len;
-    }
-    catch (...) {
-        return -1;
-    }
-}
-
-
-__attribute__(( __constructor__ ))
-void
-init_stdout()
-{
-    WHBLogModuleInit();
-    static devoptab_t dev;
-    dev.name = "STDOUT";
-    dev.structSize = sizeof dev;
-    dev.write_r = write_msg_to_whb_log;
-    devoptab_list[STD_OUT] = &dev;
-}
-
-__attribute__(( __destructor__ ))
-void
-fini_stdout()
-{
-    WHBLogModuleDeinit();
-}
 
 
 // Convenience exception class that obtains description from `SDL_GetError()`.
@@ -193,6 +149,10 @@ struct App {
     std::mutex mutex;
 
 
+    // Disallow moving
+    App(App&&) = delete;
+
+
     App()
     {
         instance = this;
@@ -278,7 +238,6 @@ struct App {
 
             SDL_FreeSurface(img);
         }
-
     }
 
 
@@ -409,36 +368,36 @@ struct App {
 
         std::lock_guard guard{mutex};
         for (unsigned i = 0; i < 4; ++i) {
-            auto& cur = cursors[i];
+            auto& cursor = cursors[i];
 
             // when no wiimote connected
             if (!wiimote_present[i]) {
-                cur.visible = false;
-                cur.trail.clear();
+                cursor.visible = false;
+                cursor.trail.clear();
                 continue;
             }
 
-            cur.visible = true;
+            cursor.visible = true;
 
             KPADStatus kpad;
             while (KPADRead(KPADChan(i), &kpad, 1) == 1) {
                 if (!kpad.posValid) {
                     // When `pos` wasn't calculated properly, hide the cursor and trail.
-                    cur.visible = false;
-                    cur.trail.clear();
+                    cursor.visible = false;
+                    cursor.trail.clear();
                 } else {
                     /*
                      * KPAD coordinates are normalized between -1.0 and +1.0, so we remap
                      * to the renderer's logical size.
                      */
-                    cur.x = 0.5f * (kpad.pos.x + 1.0f) * width;
-                    cur.y = 0.5f * (kpad.pos.y + 1.0f) * height;
+                    cursor.x = 0.5f * (kpad.pos.x + 1.0f) * width;
+                    cursor.y = 0.5f * (kpad.pos.y + 1.0f) * height;
                     // Calculate angle in degrees for SDL Renderer API.
-                    cur.angle = 180.0
+                    cursor.angle = 180.0
                                 * std::atan2(kpad.angle.y, kpad.angle.x)
                                 * std::numbers::inv_pi_v<float>;
                     // Add point to the trail.
-                    cur.add_point(cur.x, cur.y);
+                    cursor.add_point(cursor.x, cursor.y);
                 }
             }
         }

@@ -42,7 +42,7 @@ A `.wuhb` target is created, to pack both the `.rpx` executable and the assets.
 
 A `run:` target is created for convenience, to execute the program using `wiiload`.
 
-Targets to install/uninstall are also created, using curl to upload/delete the file
-through FTP.
+Targets to install/uninstall are also created, using `curl` to upload/delete the file
+via FTP.
 
-Extra Makefile recipes are imported using `@INC_AMINCLUDE@`.
+Extra `Makefile` recipes are imported using `@INC_AMINCLUDE@`.
