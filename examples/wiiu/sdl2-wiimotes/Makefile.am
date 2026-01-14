@@ -21,7 +21,7 @@ noinst_PROGRAMS = sdl2-wiimotes.elf
 
 sdl2_wiimotes_elf_SOURCES = \
 	src/main.cpp \
-	src/stdout-wiiu.cpp
+	src/wiiu-stdout.cpp
 
 
 $(WUHB_FILE): 	$(RPX_FILE) \

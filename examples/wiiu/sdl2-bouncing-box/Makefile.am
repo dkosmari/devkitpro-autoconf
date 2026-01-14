@@ -17,7 +17,7 @@ sdl2_bouncing_box_elf_SOURCES = \
 	src/dump_sdl_event.cpp \
 	src/dump_sdl_event.hpp \
 	src/main.cpp \
-	src/stdout-wiiu.cpp
+	src/wiiu-stdout.cpp
 
 
 RPX_FILE = sdl2-bouncing-box.rpx

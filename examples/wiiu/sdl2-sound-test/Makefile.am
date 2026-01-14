@@ -21,7 +21,8 @@ LDADD = $(SDL2_LIBS)
 noinst_PROGRAMS = sdl2-sound-test.elf
 
 sdl2_sound_test_elf_SOURCES = \
-	src/main.cpp
+	src/main.cpp \
+	src/wiiu-stdout.cpp
 
 
 $(WUHB_FILE): 	$(RPX_FILE)
@@ -46,11 +47,12 @@ run: $(WUHB_FILE)
 	WIILOAD=tcp:wiiu wiiload $<
 
 
-install-exec-local: $(WUHB_FILE)
+.PHONY: wiiu-install wiiu-uninstall
+
+wiiu-install: $(WUHB_FILE)
 	curl "ftp://wiiu:/fs/vol/external01/wiiu/apps/" --upload-file $<
 
-
-uninstall-local:
+wiiu-uninstall:
 	curl "ftp://wiiu" --quote "DELE /fs/vol/external01/wiiu/apps/$(WUHB_FILE)"
 
 
