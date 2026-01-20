@@ -4,18 +4,27 @@ EXTRA_DIST = \
 	README.md
 
 
+SUBDIRS = external/sdl2xx
+
+
 RPX_FILE = sdl2-sound-test.rpx
 
 WUHB_FILE = $(RPX_FILE:.rpx=.wuhb)
 
 
 
-AM_CPPFLAGS = $(SDL2_CFLAGS)
+AM_CPPFLAGS = \
+	$(SDL2_CFLAGS) \
+	-I$(srcdir)/external/sdl2xx/include
 
 AM_CXXFLAGS = \
 	-Wall -Wextra -Werror
 
-LDADD = $(SDL2_LIBS)
+LDADD = \
+	external/sdl2xx/libsdl2xx_mixer.a \
+	external/sdl2xx/libsdl2xx_ttf.a \
+	external/sdl2xx/libsdl2xx.a \
+	$(SDL2_LIBS)
 
 
 noinst_PROGRAMS = sdl2-sound-test.elf
@@ -23,6 +32,11 @@ noinst_PROGRAMS = sdl2-sound-test.elf
 sdl2_sound_test_elf_SOURCES = \
 	src/main.cpp \
 	src/wiiu-stdout.cpp
+
+sdl2_sound_test_elf_DEPENDENCIES = \
+	external/sdl2xx/libsdl2xx_mixer.a \
+	external/sdl2xx/libsdl2xx_ttf.a \
+	external/sdl2xx/libsdl2xx.a
 
 
 $(WUHB_FILE): 	$(RPX_FILE)

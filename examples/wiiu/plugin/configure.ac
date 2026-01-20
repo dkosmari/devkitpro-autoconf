@@ -14,6 +14,7 @@ AM_INIT_AUTOMAKE([foreign subdir-objects])
 AC_PROG_CXX
 
 AC_LANG([C++])
+AX_APPEND_COMPILE_FLAGS([-std=c++23], [CXX])
 
 WIIU_ENV_SETUP_WUPS([external/WiiUPluginSystem])
 WIIU_ENV_SETUP_LIBNOTIFICATIONS([external/libnotifications])

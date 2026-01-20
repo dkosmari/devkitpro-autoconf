@@ -21,6 +21,17 @@ DEVKITPRO_WUT_SETUP
 
 PKG_CHECK_MODULES([SDL2], [sdl2 SDL2_ttf SDL2_mixer])
 
+AX_SUBDIRS_CONFIGURE([external/sdl2xx],
+                     [[--disable-image],
+                      [--enable-mixer],
+                      [--enable-ttf],
+                      [--disable-examples],
+                      [CPPFLAGS=$CPPFLAGS],
+                      [CFLAGS=$CFLAGS],
+                      [CXXFLAGS=$CXXFLAGS],
+                      [LDFLAGS=$LDFLAGS],
+                      [LIBS=$LIBS],
+                      [PATH=$PATH]])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
