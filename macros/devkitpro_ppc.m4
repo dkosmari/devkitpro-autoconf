@@ -8,7 +8,7 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 4
+#serial 3
 
 # DEVKITPRO_PPC_INIT
 # ------------------
