@@ -2,13 +2,13 @@
 # devkitpro_wut.m4 - Macros to handle WUT setup.
 # URL: https://github.com/dkosmari/devkitpro-autoconf/
 
-# Copyright (c) 2025 Daniel K. O. <dkosmari>
+# Copyright (c) 2025-2026 Daniel K. O. <dkosmari>
 #
 # Copying and distribution of this file, with or without modification, are permitted in
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 6
+#serial 7
 
 # DEVKITPRO_WUT_INIT
 # ------------------
