@@ -1,15 +1,23 @@
 EXTRA_DIST = \
 	bootstrap
 
+SUBDIRS = external/sdl2xx
+
+
 WUHB_FILE = sdl2-swkbd.wuhb
 RPX_FILE = sdl2-swkbd.rpx
 
 
-AM_CPPFLAGS = $(SDL2_CFLAGS)
+AM_CPPFLAGS = \
+	$(SDL2_CFLAGS) \
+	-I$(srcdir)/external/sdl2xx/include
 
 AM_CXXFLAGS = -Wall -Wextra -Werror
 
-LDADD = $(SDL2_LIBS)
+LDADD = \
+	external/sdl2xx/libsdl2xx_ttf.a \
+	external/sdl2xx/libsdl2xx.a \
+	$(SDL2_LIBS)
 
 
 noinst_PROGRAMS = sdl2-swkbd.elf

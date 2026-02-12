@@ -1,1 +1,12 @@
-../../common/bootstrap
+#!/bin/sh -x
+
+# Note: these steps are obnoxious just for this repository.
+rm -rf ./m4
+mkdir -p ./m4
+ln -rsv ../../../macros/*.m4 ./m4/
+
+# we must also run bootstrap in some of the dependencies
+(cd external/sdl2xx && ./bootstrap) || exit 1
+
+# A normal bootstrap script will contain just a line like this.
+exec autoreconf --install --symlink "$@"

@@ -10,3 +10,6 @@
 [submodule "examples/wiiu/sdl2-sound-test/external/sdl2xx"]
 	path = examples/wiiu/sdl2-sound-test/external/sdl2xx
 	url = https://github.com/dkosmari/sdl2xx.git
+[submodule "examples/wiiu/sdl2-swkbd/external/sdl2xx"]
+	path = examples/wiiu/sdl2-swkbd/external/sdl2xx
+	url = https://github.com/dkosmari/sdl2xx.git
