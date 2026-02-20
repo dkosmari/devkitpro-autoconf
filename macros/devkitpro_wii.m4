@@ -8,7 +8,7 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 4
+#serial 5
 
 # DEVKITPRO_WII_INIT
 # ------------------
@@ -16,35 +16,44 @@
 # This macro adjusts the environment for Wii homebrew.
 #
 # Output variables:
+#   - `DEVKITPRO_LIBOGC'
 #   - `ELF2DOL'
 #   - `GXTEXCONV'
-#   - `DEVKITPRO_LIBOGC'
-#   - `PATH': appends `DEVKITPRO/tools/bin' if necessary.
+#   - `PATH': appends tools and portlibs paths.
 
 AC_DEFUN([DEVKITPRO_WII_INIT], [
 
     DEVKITPRO_PPC_INIT
 
-    # Ensure $DEVKITPRO/tools/bin is in PATH
-    DEVKITPRO_APPEND_TOOL_PATH([elf2dol], [$DEVKITPRO/tools/bin])
+    # Ensure ${DEVKITPRO}/tools/bin is in PATH
+    DEVKITPRO_APPEND_TOOL_PATH([elf2dol], [${DEVKITPRO}/tools/bin])
 
-    AC_CHECK_PROGS([ELF2DOL], [elf2dol])
-    AC_CHECK_PROGS([GXTEXCONV], [gxtexconv])
+    AC_CHECK_PROGS([ELF2DOL], [elf2dol], [], [${PATH}:${DEVKITPRO_PATH}])
+    AC_CHECK_PROGS([GXTEXCONV], [gxtexconv], [], [${PATH}:${DEVKITPRO_PATH}])
 
     # set DEVKITPRO_LIBOGC
     AC_ARG_VAR([DEVKITPRO_LIBOGC], [path to libogc])
-    AS_VAR_SET([DEVKITPRO_LIBOGC], [$DEVKITPRO/libogc])
+    AS_VAR_SET_IF([DEVKITPRO_LIBOGC],
+                  [],
+                  [AS_VAR_SET([DEVKITPRO_LIBOGC], [${DEVKITPRO}/libogc])])
     AC_SUBST([DEVKITPRO_LIBOGC])
 
     # set DEVKITPRO_PORTLIBS_WII
     AC_ARG_VAR([DEVKITPRO_PORTLIBS_WII], [path to portlibs/wii])
-    AS_VAR_SET([DEVKITPRO_PORTLIBS_WII], [$DEVKITPRO_PORTLIBS/wii])
+    AS_VAR_SET_IF([DEVKITPRO_PORTLIBS_WII],
+                  [],
+                  [AS_VAR_SET([DEVKITPRO_PORTLIBS_WII], [${DEVKITPRO_PORTLIBS}/wii])])
     AC_SUBST([DEVKITPRO_PORTLIBS_WII])
 
-    # Append portlibs/wii/bin and portlibs/ppc/bin to PATH
+    # Prepend portlibs/wii/bin and portlibs/ppc/bin to PATH
     # Note: we don't know if any portlibs package is installed or even needed.
-    DEVKITPRO_APPEND_PATH([$DEVKITPRO_PORTLIBS_WII/bin])
-    DEVKITPRO_APPEND_PATH([$DEVKITPRO_PORTLIBS_PPC/bin])
+    # Note: wii appears before ppc.
+    DEVKITPRO_PATH_PREPEND([${DEVKITPRO_PORTLIBS_PPC}/bin])
+    DEVKITPRO_PATH_PREPEND([${DEVKITPRO_PORTLIBS_WII}/bin])
+
+    # Finally, append DEVKITPRO_PATH to PATH if needed
+    AS_VAR_SET_IF([DEVKITPRO_PATH],
+                  [AS_VAR_APPEND([PATH], [":${DEVKITPRO_PATH}"])])
 
 ])dnl DEVKITPRO_WII_INIT
 
@@ -56,7 +65,7 @@ AC_DEFUN([DEVKITPRO_WII_INIT], [
 
 AC_DEFUN([DEVKITPRO_WII_OPT_INIT],[
 
-    AC_ARG_ENABLE([enable-wii],
+    AC_ARG_ENABLE([wii],
                   [AS_HELP_STRING([--enable-wii], [build Wii homebrew])])
 
     AS_VAR_IF([enable_wii], [yes], [DEVKITPRO_WII_INIT])
@@ -83,10 +92,11 @@ AC_DEFUN([DEVKITPRO_WII_SETUP], [
 
     DEVKITPRO_PPC_SETUP
 
-    AX_PREPEND_FLAG([-D__WII__],                         [CPPFLAGS])
-    AX_PREPEND_FLAG([-DGEKKO],                           [CPPFLAGS])
-    AX_PREPEND_FLAG([-I$DEVKITPRO_PORTLIBS_WII/include], [CPPFLAGS])
-    AX_PREPEND_FLAG([-I$DEVKITPRO_LIBOGC/include],       [CPPFLAGS])
+    AX_PREPEND_FLAG([-D__WII__],                           [CPPFLAGS])
+    AX_PREPEND_FLAG([-D__wii__],                           [CPPFLAGS])
+    AX_PREPEND_FLAG([-DGEKKO],                             [CPPFLAGS])
+    AX_PREPEND_FLAG([-I${DEVKITPRO_PORTLIBS_WII}/include], [CPPFLAGS])
+    AX_PREPEND_FLAG([-I${DEVKITPRO_LIBOGC}/include],       [CPPFLAGS])
 
     AX_PREPEND_FLAG([-mcpu=750],    [CFLAGS])
     AX_PREPEND_FLAG([-meabi],       [CFLAGS])
@@ -112,9 +122,17 @@ AC_DEFUN([DEVKITPRO_WII_SETUP], [
     AX_PREPEND_FLAG([-lwiikeyboard], [LIBS])
     AX_PREPEND_FLAG([-lwiiuse],      [LIBS])
 
-    AX_PREPEND_FLAG([-L$DEVKITPRO_PORTLIBS_WII/lib], [LIBS])
-    AX_PREPEND_FLAG([-L$DEVKITPRO_LIBOGC/lib/wii],   [LIBS])
+    AX_PREPEND_FLAG([-L${DEVKITPRO_LIBOGC}/lib/wii],   [LIBS])
+    AX_PREPEND_FLAG([-L${DEVKITPRO_PORTLIBS_WII}/lib], [LIBS])
 
+    DEVKITPRO_CHECK_LIBRARY([gccore.h],
+                            [ogc],
+                            [],
+                            [],
+                            [],
+                            [AC_MSG_ERROR([libogc not found in ${DEVKITPRO}; install the package with "dkp-pacman -S libogc"])])
+
+    m4_pattern_allow([AM_V_at])
 
     # custom Makefile recipes
     AX_ADD_AM_MACRO([
@@ -124,20 +142,20 @@ AC_DEFUN([DEVKITPRO_WII_SETUP], [
 clean: clean-dol
 
 clean-dol:
-	\$(RM) *.dol
+	\$([AM_V_at])\$(RM) *.dol
 
 %.dol: %.strip.elf
-	\$(ELF2DOL) \$< \$[@]
+	\$([AM_V_at])\$(ELF2DOL) \$< \$[@]
 
 .PHONY: clean-tpl
 
 clean: clean-tpl
 
 clean-tpl:
-	\$(RM) *.tpl
+	\$([AM_V_at])\$(RM) *.tpl
 
 %.tpl: %.scf
-	\$(GXTEXCONV) -s \$< -o \$[@]
+	\$([AM_V_at])\$(GXTEXCONV) -s \$< -o \$[@]
 
 ])
 

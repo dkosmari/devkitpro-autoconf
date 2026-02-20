@@ -8,7 +8,7 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 1
+#serial 2
 
 # WIIU_ENV_SETUP_LIB(PREFIX, [LIB-FILE], [LIB-DIR], SYSTEM-LIB-DIR)
 # -----------------------------------------------------------------
@@ -42,6 +42,7 @@ AC_DEFUN([WIIU_ENV_SETUP_LIB],[
 
     # Makefile rules for building and cleaning $1
     AX_ADD_AM_MACRO([
+
 .PHONY: clean-wiiu-env-$1
 
 clean: clean-wiiu-env-$1

@@ -30,6 +30,7 @@ DISTCLEANFILES = $(AMINCLIDE)
 
 # Use "make run" to execute the program on the Wii, using USB Gecko.
 .PHONY: run
+
 run: $(DOL_FILE)
-	WIILOAD=/dev/ttyUSB0 wiiload $<
+	WIILOAD=tcp:wii wiiload $<
 

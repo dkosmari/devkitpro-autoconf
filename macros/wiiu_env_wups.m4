@@ -8,7 +8,7 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 1
+#serial 2
 
 # WIIU_ENV_SETUP_WUPS([RELATIVE-PATH-TO-WUPS])
 # --------------------------------------------
@@ -53,15 +53,16 @@ AC_DEFUN([WIIU_ENV_SETUP_WUPS],[
 
     # Makefile rules for building .wps plugins
     AX_ADD_AM_MACRO([
+
 .PHONY: clean-wps
 
 clean: clean-wps
 
 clean-wps:
-	\$(RM) *.wps
+	\$([AM_V_at])\$(RM) *.wps
 
 %.wps: %.strip.elf
-	\$(ELF2RPL) \$< \$[@]
+	\$([AM_V_at])\$(ELF2RPL) \$< \$[@]
 	\$([AM_V_at])printf "PL" | dd of=\$[@] bs=1 seek=9 count=2 conv=notrunc status=none
 
 ])

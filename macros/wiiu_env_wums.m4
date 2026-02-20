@@ -8,7 +8,7 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 1
+#serial 2
 
 # WIIU_ENV_SETUP_WUMS([RELATIVE-PATH-TO-WUMS])
 # --------------------------------------------
@@ -53,15 +53,16 @@ AC_DEFUN([WIIU_ENV_SETUP_WUMS],[
 
     # Makefile rules for building .wms modules
     AX_ADD_AM_MACRO([
+
 .PHONY: clean-wms
 
 clean: clean-wms
 
 clean-wms:
-	\$(RM) *.wms
+	\$([AM_V_at])\$(RM) *.wms
 
 %.wms: %.strip.elf
-	\$(ELF2RPL) \$< \$[@]
+	\$([AM_V_at])\$(ELF2RPL) \$< \$[@]
 	\$([AM_V_at])printf '\xAF\xFE' | dd of=\$[@] bs=1 seek=9 count=2 conv=notrunc status=none
 
 ])
