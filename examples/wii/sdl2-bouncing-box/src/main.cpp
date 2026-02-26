@@ -1,175 +1,242 @@
-#include <cstdio>               // printf()
+#include <iostream>
 
-#include <sys/iosupport.h>      // devoptab
-
-#include <gccore.h>
+#ifndef ASSETS
+// If we don't bundle the assets inside the .dol, we will try to load from a FAT32 device.
+#include <fat.h>
+#endif
 
 #include <SDL.h>
+#include <SDL_mixer.h>
 
-#include "show.hpp"
+#include "dump_sdl_event.hpp"
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 
-// This is how we hook into stdout/stderr with newlib. Let's send it to USB Gecko.
+using std::cout;
+using std::endl;
 
-// It's tradition to use gecko on port B, aka channel 1.
-static const int gecko_channel = 1;
 
-static
-ssize_t
-write_to_gecko(struct _reent *, void *, const char *buf, size_t len)
-{
-    return usb_sendbuffer(gecko_channel, buf, len);
+#ifdef ASSETS
+extern "C" {
+    extern char _binary_assets_bonk_wav_start[];
+    extern char _binary_assets_bonk_wav_end[];
+    extern char _binary_assets_bonk_wav_size[];
 }
+#endif
 
-__attribute__((__constructor__))
-void init_stdio()
+
+// Note: SDL2 currently has no support for widescreen.
+// See https://github.com/devkitPro/SDL/issues/73
+int screen_width = 640;
+int screen_height = 480;
+
+SDL_Window* window;
+SDL_Renderer* renderer;
+Mix_Chunk* bonk;
+
+
+void
+run_main_loop()
 {
-    if (!usb_isgeckoalive(gecko_channel))
-        return;
+    const float size = screen_height / 10;
+    const float max_x = screen_width;
+    const float max_y = screen_height;
 
-    static devoptab_t my_stdio;
-    my_stdio.name = "stdio";
-    my_stdio.structSize = sizeof(devoptab_t);
-    my_stdio.write_r = write_to_gecko;
+    SDL_FRect box{
+        .x = 0,
+        .y = 0,
+        .w = size,
+        .h = size,
+    };
 
-    devoptab_list[STD_OUT] = &my_stdio;
-    devoptab_list[STD_ERR] = &my_stdio;
+    // TODO: randomize initial velocity.
+    float vel_x = 4;
+    float vel_y = 4;
+
+    bool running = true;
+    while (running) {
+        SDL_Event e;
+        while (SDL_PollEvent(&e)) {
+
+            dump_sdl_event(e);
+
+            switch (e.type) {
+
+                case SDL_QUIT:
+                    cout << "quit requested" << endl;
+                    running = false;
+                    break;
+
+                case SDL_CONTROLLERBUTTONDOWN:
+                    switch (e.cbutton.button) {
+                        case SDL_CONTROLLER_BUTTON_B:
+                        case SDL_CONTROLLER_BUTTON_START:
+                            running = false;
+                            break;
+                    }
+                    break;
+
+                case SDL_KEYDOWN:
+                    switch (e.key.keysym.sym) {
+                        case SDLK_q:
+                            // quit app with CTRL+Q
+                            if (e.key.keysym.mod & KMOD_CTRL)
+                                running = false;
+                            break;
+
+                        case SDLK_F4:
+                            // quit app with ALT+F4
+                            if (e.key.keysym.mod & KMOD_ALT)
+                                running = false;
+                            break;
+
+                        case SDLK_ESCAPE:
+                            // quit app with ESC
+                            running = false;
+                            break;
+
+                    }
+                    break;
+
+                case SDL_CONTROLLERDEVICEADDED: {
+                    auto c = SDL_GameControllerOpen(e.cdevice.which);
+                    cout << "Added: \"" << SDL_GameControllerName(c) << "\"" << endl;
+                    break;
+                }
+
+                case SDL_CONTROLLERDEVICEREMOVED: {
+                    auto c = SDL_GameControllerFromInstanceID(e.cdevice.which);
+                    cout << "Removed: \"" << SDL_GameControllerName(c) << "\"" << endl;
+                    SDL_GameControllerClose(c);
+                    break;
+                }
+
+            } // switch (e.type)
+        }
+
+        if (!running)
+            return;
+
+        box.x += vel_x;
+        box.y += vel_y;
+
+        bool bounced = false;
+        if ((box.x + box.w >= max_x && vel_x > 0)
+            || (box.x <= 0 && vel_x < 0)) {
+            vel_x = -vel_x;
+            bounced = true;
+        }
+        if ((box.y + box.h >= max_y && vel_y > 0)
+            || (box.y <= 0 && vel_y < 0)) {
+            vel_y = -vel_y;
+            bounced = true;
+        }
+
+        if (bounced) {
+            if (bonk)
+                Mix_PlayChannel(-1, bonk, 0);
+            cout << "bonk" << endl;
+        }
+
+        // TODO: add some randomness to vx/vy after every bounce
+
+        SDL_SetRenderDrawColor(renderer, 0, 0, 40, 255);
+        SDL_RenderClear(renderer);
+
+        // TODO: randomly change box color after every bounce
+        SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+        SDL_RenderFillRectF(renderer, &box);
+
+        SDL_RenderPresent(renderer);
+    } // while (running)
 }
 
 
 // Note: SDL2 on the Wii replaces main() with SDL_main(), so we must use
 // the arguments version.
-int main(int, char*[])
+int
+main(int,
+     char* [])
 {
-    std::printf("SDL2 program started\n");
+    cout << PACKAGE_STRING << endl;
 
-    SDL_Window* win = nullptr;
-    SDL_Renderer* ren = nullptr;
     int status = 0;
 
-    int screen_width = 640;
-    int screen_height = 480;
+#ifndef ASSETS
+    // mount the SD card under sd:/
+    if (!fatInitDefault())
+        cout << "libfat failed to init" << endl;
+#endif
 
-    CONF_Init();
-    if (CONF_GetAspectRatio() == CONF_ASPECT_16_9) {
-        std::printf("Wide screen detected.\n");
-        screen_width = 854;
-    }
-
-
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
-        std::fprintf(stderr, "Failed to init SDL: %s\n", SDL_GetError());
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER | SDL_INIT_AUDIO) < 0) {
+        cout << "Failed to init SDL: " << SDL_GetError() << endl;
         status = -1;
-        goto error_return;
+        goto error_end_program;
     }
 
-    win = SDL_CreateWindow("Bouncing Box",
-                           SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-                           screen_width, screen_height,
-                           SDL_WINDOW_FULLSCREEN);
-    if (!win) {
-        std::fprintf(stderr, "Failed to create window: %s\n", SDL_GetError());
-        status = -3;
+    Mix_Init(0);
+
+    if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, AUDIO_S16SYS, 2, 4096) == -1) {
+        cout << "Failed to open audio: " << SDL_GetError() << endl;
+        status = -2;
         goto error_quit_sdl;
     }
 
-    ren = SDL_CreateRenderer(win, -1,
-                             SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (!ren) {
-        std::fprintf(stderr, "Failed to create renderer: %s\n", SDL_GetError());
+    window = SDL_CreateWindow("Bouncing Box",
+                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+                              screen_width, screen_height,
+                              0);
+    if (!window) {
+        cout << "Failed to create window: " << SDL_GetError() << endl;
+        status = -3;
+        goto error_close_mixer;
+    }
+
+    SDL_GetWindowSize(window, &screen_width, &screen_height);
+    renderer = SDL_CreateRenderer(window, -1,
+                                  SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (!renderer) {
+        cout << "Failed to create renderer: " << SDL_GetError() << endl;
         status = -4;
         goto error_destroy_window;
     }
 
+    cout << "Setting renderer logical size to " << screen_width << "x" << screen_height << endl;
+    SDL_RenderSetLogicalSize(renderer, screen_width, screen_height);
+
+#ifndef ASSETS
+    // Load asset from SD card.
+    bonk = Mix_LoadWAV("sd:/bonk.wav"); // TODO
+#else
     {
-        const float size = 50;
-        const float max_x = screen_width - size;
-        const float max_y = screen_height - size;
-        float px = 0;
-        float py = 0;
-        float vx = 3;
-        float vy = 3;
-
-        SDL_Rect box{};
-        box.w = size;
-        box.h = size;
-
-        SDL_RenderSetLogicalSize(ren, screen_width, screen_height);
-
-        bool running = true;
-        while (running) {
-            SDL_Event e;
-            while (SDL_PollEvent(&e)) {
-                show(e);
-                switch (e.type) {
-                case SDL_QUIT:
-                    std::printf("Handling SDL_QUIT\n");
-                    running = false;
-                    break;
-                case SDL_CONTROLLERBUTTONDOWN:
-                    switch (e.cbutton.button) {
-                    case SDL_CONTROLLER_BUTTON_B:
-                    case SDL_CONTROLLER_BUTTON_START:
-                        running = false;
-                        break;
-                    }
-                    break;
-                case SDL_CONTROLLERDEVICEADDED:
-                    {
-                        auto c = SDL_GameControllerOpen(e.cdevice.which);
-                        std::printf("Added controller %d: %s\n",
-                                    e.cdevice.which,
-                                    SDL_GameControllerName(c));
-                    }
-                    break;
-                case SDL_CONTROLLERDEVICEREMOVED:
-                    {
-                        auto c = SDL_GameControllerFromInstanceID(e.cdevice.which);
-                        std::printf("Removed controller: %s\n",
-                                    SDL_GameControllerName(c));
-                        SDL_GameControllerClose(c);
-                    }
-                    break;
-                }
-            }
-
-            px += vx;
-            py += vy;
-            [[maybe_unused]] bool bounced = false;
-            if ((px >= max_x && vx > 0)
-                || (px <= 0 && vx < 0)) {
-                vx = -vx;
-                bounced = true;
-            }
-            if ((py >= max_y && vy > 0)
-                || (py <= 0 && vy < 0)) {
-                vy = -vy;
-                bounced = true;
-            }
-
-            // TODO: add some randomness to vx/vy after every bounce
-
-            SDL_SetRenderDrawColor(ren, 0, 0, 40, 255);
-            SDL_RenderClear(ren);
-
-            box.x = px;
-            box.y = py;
-            // TODO: randomly change box color after every bounce
-            SDL_SetRenderDrawColor(ren, 255, 255, 0, 255);
-            SDL_RenderFillRect(ren, &box);
-
-            SDL_RenderPresent(ren);
-        }
+        // Load asset from the binary itself.
+        auto bonk_rw = SDL_RWFromConstMem(_binary_assets_bonk_wav_start,
+                                          _binary_assets_bonk_wav_end
+                                          -
+                                          _binary_assets_bonk_wav_start);
+        bonk = Mix_LoadWAV_RW(bonk_rw, 1);
     }
+#endif
+    if (!bonk)
+        cout << "Failed to load bonk.wav: " << Mix_GetError() << endl;
 
-    std::printf("Shutting down\n");
+    run_main_loop();
 
-    SDL_DestroyRenderer(ren);
+    cout << "Shutting down" << endl;
+
+    Mix_FreeChunk(bonk); // bonk might be null, but it's harmless
+    SDL_DestroyRenderer(renderer);
  error_destroy_window:
-    SDL_DestroyWindow(win);
+    SDL_DestroyWindow(window);
+ error_close_mixer:
+    Mix_CloseAudio();
  error_quit_sdl:
+    Mix_Quit();
     SDL_Quit();
- error_return:
+ error_end_program:
 
     return status;
 }

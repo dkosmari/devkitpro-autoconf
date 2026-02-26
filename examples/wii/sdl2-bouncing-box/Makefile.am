@@ -3,7 +3,8 @@ EXTRA_DIST = \
 	README.md
 
 
-AM_CPPFLAGS = $(SDL2_CFLAGS)
+AM_CPPFLAGS = \
+	$(SDL2_CFLAGS)
 
 AM_CXXFLAGS = -Wall -Wextra -Werror
 
@@ -16,7 +17,21 @@ noinst_PROGRAMS = sdl2-bouncing-box.elf
 
 sdl2_bouncing_box_elf_SOURCES = \
 	src/main.cpp \
-	src/show.cpp src/show.hpp
+	src/dump_sdl_event.cpp \
+	src/dump_sdl_event.hpp \
+	src/wii-stdout.cpp
+
+SUFFIXES = .wav
+
+.wav.o:
+	$(LD) --relocatable --format binary $< -o $@
+
+
+if ASSETS
+AM_CPPFLAGS += -DASSETS
+sdl2_bouncing_box_elf_SOURCES += assets/bonk.wav
+endif ASSETS
+
 
 all-local: $(DOL_FILE)
 
@@ -31,6 +46,7 @@ DISTCLEANFILES = $(AMINCLIDE)
 # Use "make run" to execute the program on the Wii, using USB Gecko.
 .PHONY: run
 
+WIILOAD ?= tcp:wii
 run: $(DOL_FILE)
-	WIILOAD=tcp:wii wiiload $<
+	WIILOAD=$(WIILOAD) wiiload $<
 
