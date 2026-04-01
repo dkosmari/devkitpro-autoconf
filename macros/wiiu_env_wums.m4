@@ -8,7 +8,7 @@
 # any medium without royalty provided the copyright notice and this notice are
 # preserved. This file is offered as-is, without any warranty.
 
-#serial 2
+#serial 3
 
 # WIIU_ENV_SETUP_WUMS([RELATIVE-PATH-TO-WUMS])
 # --------------------------------------------
@@ -78,6 +78,8 @@ $WUMS_DEBUG_LIB:
 .PHONY: clean-wiiu-env-WUMS
 
 clean: clean-wiiu-env-WUMS
+
+distclean: clean-wiiu-env-WUMS
 
 clean-wiiu-env-WUMS:
 	-\$([AM_V_at])\$(MAKE) \$(AM_MAKEFLAGS) -C \$(WUMS_DIR) clean
