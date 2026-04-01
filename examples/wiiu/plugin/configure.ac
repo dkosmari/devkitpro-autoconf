@@ -11,6 +11,8 @@ DEVKITPRO_WUT_INIT
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
+DEVKITPRO_WUT_SETUP
+
 AC_PROG_CXX
 
 AC_LANG([C++])
