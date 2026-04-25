@@ -38,18 +38,17 @@ EXTRA_dummy_elf_DEPENDENCIES = \
 all-local: $(WPS_FILE)
 
 
-.PHONY: run
+.PHONY: run wiiu-install wiiu-uninstall
 
 
 run: $(WPS_FILE)
 	WIILOAD=tcp:wiiu wiiload $<
 
 
-.PHONY: wiiu-install wiiu-uninstall
-
 # Use `make install-wiiu' to send it straight to the Aroma plugins folder through ftpiiu
 wiiu-install: $(WPS_FILE)
 	curl "ftp://wiiu:/fs/vol/external01/wiiu/environments/aroma/plugins/" --upload-file $<
+
 
 wiiu-uninstall:
 	curl "ftp://wiiu" --quote "DELE /fs/vol/external01/wiiu/environments/aroma/plugins/$(WPS_FILE)"
