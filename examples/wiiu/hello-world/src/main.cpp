@@ -1,19 +1,15 @@
-#include <proc_ui/procui.h>
 #include <vpad/input.h>
 #include <whb/log.h>
 #include <whb/log_console.h>
 #include <whb/log_module.h>
 #include <whb/proc.h>
 
-
-// TODO: add KPAD support.
-
 int main()
 {
     WHBProcInit();
     WHBLogModuleInit();
     WHBLogConsoleInit();
-    WHBLogConsoleSetColor(0x1024000);
+    WHBLogConsoleSetColor(0x10204000);
 
     WHBLogPrint("Hello World!\n");
     WHBLogPrint("Press a button:");
