@@ -31,6 +31,7 @@ using namespace std::literals;
 using std::cout;
 using std::endl;
 
+using namespace sdl::literals;
 using sdl::vec2;
 using sdl::vec2f;
 
@@ -126,7 +127,7 @@ struct Button {
         const
     {
         if (click_started)
-            renderer.set_color(sdl::color::red);
+            renderer.set_color(sdl::color::yellow);
         else
             renderer.set_color(sdl::color::white);
         renderer.fill_box(rect);
@@ -300,7 +301,7 @@ struct App {
     void
     draw()
     {
-        renderer.set_color(sdl::color::olive);
+        renderer.set_color(0x00'60'30_rgb);
         renderer.clear();
 
         for (const auto& b : buttons)

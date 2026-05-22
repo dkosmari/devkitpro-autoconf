@@ -203,8 +203,7 @@ struct App {
     sdl::window window{
         PACKAGE_STRING,
         sdl::window::pos_undefined,
-        sdl::vec2{1280, 720},
-        sdl::window::flag::fullscreen
+        {1280, 720}
     };
 
     sdl::renderer renderer{
@@ -243,6 +242,7 @@ struct App {
 
         {
             // We initialize the audio so the swkbd can play key sounds.
+            TRACE("Initializing audio");
             sdl::audio::spec spec;
             spec.freq = 48000;
             spec.format = AUDIO_S16SYS;
@@ -272,8 +272,7 @@ struct App {
                                  &system_font_size))
                 throw std::runtime_error{"could not get system font"};
 
-            font_blob.create(reinterpret_cast<const void*>(system_font_data),
-                             system_font_size);
+            font_blob.create(static_cast<const void*>(system_font_data), system_font_size);
             font.create(font_blob, 40);
         }
 
@@ -333,7 +332,7 @@ struct App {
     process_events()
     {
         sdl::events::event event;
-        while (sdl::events::poll(event))
+        while (running && sdl::events::poll(event))
             handle_event(event);
     }
 
@@ -346,6 +345,7 @@ struct App {
             using enum sdl::events::type;
 
             case quit:
+                cout << "Quitting..." << endl;
                 running = false;
                 break;
 
