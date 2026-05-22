@@ -3,8 +3,8 @@ syntax: glob
 *.tar.gz
 *~
 aclocal.m4
-autom4te.cache
-build-aux
+autom4te.cache/
+build-aux/
 config.log
 config.status
 configure
@@ -20,11 +20,12 @@ Makefile.in
 *.wms
 *.wps
 *.wuhb
-.deps
+.deps/
 .dirstamp
 aminclude.am
 config.h
 config.h.in
 examples/**/compile_flags.txt
 examples/**/m4/*.m4
+libtool
 stamp-h1

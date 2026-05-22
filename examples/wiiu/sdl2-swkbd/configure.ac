@@ -9,7 +9,9 @@ AC_CONFIG_AUX_DIR([build-aux])
 
 DEVKITPRO_WUT_INIT
 
-AM_INIT_AUTOMAKE([foreign subdir-objects])
+AM_INIT_AUTOMAKE([foreign subdir-objects tar-pax])
+
+LT_INIT([disable-shared])
 
 AC_PROG_CXX
 AX_APPEND_COMPILE_FLAGS([-std=c++23], [CXX])

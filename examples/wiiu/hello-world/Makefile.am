@@ -4,10 +4,12 @@ EXTRA_DIST = \
 	README.md
 
 
-RPX_FILE = hello-world.rpx
+ELF_FILE := hello-world.elf
+
+RPX_FILE := $(ELF_FILE:.elf=.rpx)
 
 # Tip: use noinst_PROGRAMS instead of bin_PROGRAMS, to not have it on `make install'.
-noinst_PROGRAMS = hello-world.elf
+noinst_PROGRAMS = $(ELF_FILE)
 
 hello_world_elf_SOURCES = src/main.cpp
 
@@ -30,6 +32,7 @@ DISTCLEANFILES = $(AMINCLUDE)
 
 # Use `make run' to run it on the Wii U using wiiload (assume the host name is `wiiu')
 .PHONY: run
+WIILOAD ?= tcp:wiiu
 run: $(RPX_FILE)
-	WIILOAD=tcp:wiiu wiiload $<
+	WIILOAD=$(WIILOAD) wiiload $<
 

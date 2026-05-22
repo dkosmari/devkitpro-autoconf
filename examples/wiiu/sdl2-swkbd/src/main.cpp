@@ -5,13 +5,15 @@
 #include <vector>
 
 #include <coreinit/memory.h>    // OSGetSharedData()
-#include <sysapp/title.h>
-
-#include "sdl.hpp"
-#include "sdl_debug.hpp"
-#include "sdl_ttf.hpp"
 
 #include <SDL2/SDL_syswm.h>
+
+#include <sdl2xx/sdl.hpp>
+#include <sdl2xx/ttf.hpp>
+
+#include "sdl_debug.hpp"
+
+#include "tracer.hpp"
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -90,8 +92,8 @@ struct Label {
         texture.destroy();
         try {
             if (!text.empty()) {
-                auto surface = font->render_blended_wrapped(text.data());
-                texture = renderer->create_texture(surface);
+                auto surface = font->render_blended(text.data(), sdl::color::white, 0);
+                texture.create(*renderer, surface);
             }
         }
         catch (std::exception& e) {
@@ -119,8 +121,8 @@ struct Label {
         const
     {
         if (!texture)
-            return {0, font->height()};
-        return texture.size();
+            return {0, font->get_height()};
+        return texture.get_size();
     }
 
     void
@@ -146,7 +148,7 @@ struct Label {
     get_position()
         const noexcept
     {
-        return text_rect.center();
+        return text_rect.get_center();
     }
 
     void
@@ -155,14 +157,14 @@ struct Label {
     {
         // draw border
         renderer->set_color(0xffffff_rgb);
-        renderer->fill_rect(border_rect);
+        renderer->fill_box(border_rect);
 
         // draw background
         if (selected)
             renderer->set_color(0x404080_rgb);
         else
             renderer->set_color(0x000000_rgb);
-        renderer->fill_rect(box_rect);
+        renderer->fill_box(box_rect);
 
         // draw text
         if (texture)
@@ -187,23 +189,24 @@ struct Label {
 
 struct App {
 
-    sdl::init sdl_init{SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER};
+    sdl::init sdl_init{sdl::init::flag::video, sdl::init::flag::game_controller};
     sdl::ttf::init ttf_init;
 
     sdl::window window{
         PACKAGE_STRING,
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        0, 0,
-        SDL_WINDOW_FULLSCREEN
+        sdl::window::pos_undefined,
+        sdl::vec2{1280, 720},
+        sdl::window::flag::fullscreen
     };
 
     sdl::renderer renderer{
         window,
         -1,
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+        sdl::renderer::flag::accelerated,
+        sdl::renderer::flag::present_vsync
     };
 
+    sdl::rwops font_blob;
     sdl::ttf::font font;
 
     bool running = false;
@@ -223,13 +226,17 @@ struct App {
     int current_locale = 0;
     sdl::texture locale_texture;
 
+    std::vector<sdl::game_controller::device> controllers;
+
 
     App()
     {
-        auto win_size = window.size();
+        TRACE_FUNC;
+
+        auto win_size = window.get_size();
         cout << "Window size is " << win_size.x << "x" << win_size.y << endl;
 
-        renderer.set_logical_size(window.size());
+        renderer.set_logical_size(win_size);
         renderer.set_blend_mode(SDL_BLENDMODE_BLEND);
 
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");
@@ -237,19 +244,20 @@ struct App {
         // Receive notifications about the swkbd closing.
         SDL_EventState(SDL_SYSWMEVENT, SDL_ENABLE);
 
-        cout << "Loading system font" << endl;
-        void* system_font_data = nullptr;
-        uint32_t system_font_size = 0;
-        if (!OSGetSharedData(OS_SHAREDDATATYPE_FONT_STANDARD,
-                             0xefface,
-                             &system_font_data,
-                             &system_font_size))
-            throw std::runtime_error{"could not get system font"};
+        {
+            TRACE("Loading system font");
+            void* system_font_data = nullptr;
+            uint32_t system_font_size = 0;
+            if (!OSGetSharedData(OS_SHAREDDATATYPE_FONT_STANDARD,
+                                 0xefface,
+                                 &system_font_data,
+                                 &system_font_size))
+                throw std::runtime_error{"could not get system font"};
 
-        font.create(SDL_RWFromConstMem(system_font_data, system_font_size),
-                    1,
-                    40);
-        cout << "... done" << endl;
+            font_blob.create(reinterpret_cast<const void*>(system_font_data),
+                             system_font_size);
+            font.create(font_blob, 40);
+        }
 
         if (SDL_HasScreenKeyboardSupport())
             cout << "We got swkbd support!" << endl;
@@ -258,7 +266,7 @@ struct App {
 
         {
             Label instructions{renderer, font, "Double tap to add/edit a label"};
-            instructions.set_position(window.size() / 2);
+            instructions.set_position(win_size / 2);
             labels.push_back(std::move(instructions));
         }
 
@@ -271,13 +279,13 @@ struct App {
     void
     run()
     {
+        TRACE_FUNC;
+
         running = true;
-        cout << "Running..." << endl;
         while (running) {
             draw();
-            handle_events();
+            process_events();
         }
-        cout << "Quitting..." << endl;
     }
 
     void
@@ -301,8 +309,8 @@ struct App {
             sdl::rect locale_rect;
             locale_rect.x = 10;
             locale_rect.y = 10;
-            locale_rect.w = locale_texture.width();
-            locale_rect.h = locale_texture.height();
+            locale_rect.w = locale_texture.get_width();
+            locale_rect.h = locale_texture.get_height();
             renderer.copy(locale_texture, {}, locale_rect);
         }
 
@@ -310,10 +318,10 @@ struct App {
     }
 
     void
-    handle_events()
+    process_events()
     {
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
+        sdl::events::event event;
+        while (sdl::events::poll(event))
             handle_event(event);
     }
 
@@ -328,12 +336,15 @@ struct App {
                 break;
 
             case SDL_CONTROLLERDEVICEADDED:
-                SDL_GameControllerOpen(event.cdevice.which);
+                controllers.emplace_back(event.cdevice.which);
                 break;
 
             case SDL_CONTROLLERDEVICEREMOVED:
-                if (auto ctrlr = SDL_GameControllerFromInstanceID(event.cdevice.which))
-                    SDL_GameControllerClose(ctrlr);
+                std::erase_if(controllers,
+                              [id=event.cdevice.which](sdl::game_controller::device& dev)
+                              {
+                                  return id == dev.get_id();
+                              });
                 break;
 
             case SDL_CONTROLLERBUTTONDOWN:
@@ -371,7 +382,7 @@ struct App {
 
         press_pos = {event.x, event.y};
         selected_idx.reset();
-        for (auto [idx, label] : std::views::enumerate(labels))
+        for (auto [idx, label] : labels | std::views::enumerate | std::views::reverse)
             if (label.inside(press_pos)) {
                 selected_idx = idx;
                 grab_offset = label.relative({event.x, event.y});
@@ -385,7 +396,7 @@ struct App {
         release_pos = {event.x, event.y};
 
         const float drag_threshold = 25;
-        bool dragged = (release_pos - press_pos).length() > drag_threshold;
+        bool dragged = length(release_pos - press_pos) > drag_threshold;
 
         if (selected_idx) {
             if (!dragged) {
@@ -396,7 +407,6 @@ struct App {
                     SDL_WiiUSetSWKBDInitialText(label.text.data());
                     SDL_WiiUSetSWKBDHighlightInitialText(SDL_TRUE);
                     SDL_WiiUSetSWKBDOKLabel("Modify");
-                    window.focus();
                     SDL_StartTextInput();
                 }
             }
@@ -406,7 +416,6 @@ struct App {
                 creating = true;
                 SDL_WiiUSetSWKBDHintText("New label...");
                 SDL_WiiUSetSWKBDOKLabel("Create");
-                window.focus();
                 SDL_StartTextInput();
             }
         }
@@ -435,6 +444,8 @@ struct App {
     void
     handle_syswm(const SDL_SysWMEvent& event)
     {
+        TRACE_FUNC;
+
         if (event.msg->subsystem != SDL_SYSWM_WIIU)
             return;
 
@@ -445,10 +456,12 @@ struct App {
 
             case SDL_WIIU_SYSWM_SWKBD_OK_FINISH_EVENT:
                 if (creating) {
+                    TRACE("creating label");
                     labels.emplace_back(renderer, font, editing_text);
                     labels.back().set_position(release_pos);
                     selected_idx = labels.size() - 1;
                 } else {
+                    TRACE("editing label");
                     if (selected_idx) {
                         if (!editing_text.empty()) {
                             labels[*selected_idx].set_text(editing_text);
@@ -498,8 +511,8 @@ struct App {
         SDL_WiiUSetSWKBDLocale(locales[current_locale]);
 
         std::string locale_str = "Locale: \""s + locales[current_locale] + "\""s;
-        auto surface = font.render_blended(locale_str.data());
-        locale_texture = renderer.create_texture(surface);
+        auto surface = font.render_blended(locale_str, sdl::color::white);
+        locale_texture.create(renderer, surface);
     }
 
 };
@@ -507,14 +520,11 @@ struct App {
 
 int main()
 {
-    cout << "Starting " << PACKAGE << endl;
-
-    // WORKAROUND
-    // Force linking against sysapp
-    SYSCheckTitleExists(0);
+    TRACE_FUNC;
 
     try {
         App app;
+        TRACE("app.run()");
         app.run();
     }
     catch (std::exception& e) {
