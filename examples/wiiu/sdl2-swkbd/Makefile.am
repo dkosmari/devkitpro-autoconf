@@ -13,6 +13,7 @@ WUHB_FILE := $(RPX_FILE:.rpx=.wuhb)
 
 AM_CPPFLAGS = \
 	$(SDL2_CFLAGS) \
+	-I$(srcdir)/external/cafe_glyphs/include \
 	-I$(srcdir)/external/sdl2xx/include
 
 AM_CXXFLAGS = -Wall -Wextra -Werror

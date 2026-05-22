@@ -8,6 +8,8 @@
 
 #include <SDL2/SDL_syswm.h>
 
+#include <cafe_glyphs.h>
+
 #include <sdl2xx/sdl.hpp>
 #include <sdl2xx/ttf.hpp>
 
@@ -156,14 +158,14 @@ struct Label {
         const
     {
         // draw border
-        renderer->set_color(0xffffff_rgb);
+        renderer->set_color(sdl::color::white);
         renderer->fill_box(border_rect);
 
         // draw background
         if (selected)
-            renderer->set_color(0x404080_rgb);
+            renderer->set_color(0x20'20'A0_rgb);
         else
-            renderer->set_color(0x000000_rgb);
+            renderer->set_color(sdl::color::black);
         renderer->fill_box(box_rect);
 
         // draw text
@@ -184,13 +186,19 @@ struct Label {
         return p - get_position();
     }
 
-};
+}; // struct Label
 
 
 struct App {
 
-    sdl::init sdl_init{sdl::init::flag::video, sdl::init::flag::game_controller};
+    sdl::init sdl_init{
+        sdl::init::flag::video,
+        sdl::init::flag::game_controller,
+        sdl::init::flag::audio
+    };
     sdl::ttf::init ttf_init;
+
+    sdl::audio::device audio_dev;
 
     sdl::window window{
         PACKAGE_STRING,
@@ -232,6 +240,16 @@ struct App {
     App()
     {
         TRACE_FUNC;
+
+        {
+            // We initialize the audio so the swkbd can play key sounds.
+            sdl::audio::spec spec;
+            spec.freq = 48000;
+            spec.format = AUDIO_S16SYS;
+            spec.channels = 2;
+            spec.samples = 4096;
+            audio_dev.create(false, spec);
+        }
 
         auto win_size = window.get_size();
         cout << "Window size is " << win_size.x << "x" << win_size.y << endl;
@@ -280,7 +298,6 @@ struct App {
     run()
     {
         TRACE_FUNC;
-
         running = true;
         while (running) {
             draw();
@@ -292,15 +309,10 @@ struct App {
     draw()
     {
         if (window.is_screen_keyboard_shown())
-            renderer.set_color(0x808000_rgb);
+            renderer.set_color(0x80'80'00_rgb);
         else
-            renderer.set_color(0x006000_rgb);
+            renderer.set_color(0x00'60'30_rgb);
         renderer.clear();
-
-        // SDL BUG
-        // Draw a transparent point to force SDL to update viewport/clipping.
-        renderer.set_color(0, 0, 0, 0);
-        renderer.draw_point(1, 1);
 
         for (auto [idx, label] : std::views::enumerate(labels))
             label.draw(selected_idx && std::size_t(idx) == *selected_idx);
@@ -326,20 +338,22 @@ struct App {
     }
 
     void
-    handle_event(const SDL_Event& event)
+    handle_event(const sdl::events::event& event)
     {
         sdl::debug::print(event);
 
-        switch (event.type) {
-            case SDL_QUIT:
+        switch (sdl::events::type{event.type}) {
+            using enum sdl::events::type;
+
+            case quit:
                 running = false;
                 break;
 
-            case SDL_CONTROLLERDEVICEADDED:
+            case controller_device_added:
                 controllers.emplace_back(event.cdevice.which);
                 break;
 
-            case SDL_CONTROLLERDEVICEREMOVED:
+            case controller_device_removed:
                 std::erase_if(controllers,
                               [id=event.cdevice.which](sdl::game_controller::device& dev)
                               {
@@ -347,35 +361,37 @@ struct App {
                               });
                 break;
 
-            case SDL_CONTROLLERBUTTONDOWN:
+            case controller_down:
                 handle_button_down(event.cbutton);
                 break;
 
-            case SDL_MOUSEBUTTONDOWN:
+            case mouse_down:
                 handle_mouse_down(event.button);
                 break;
 
-            case SDL_MOUSEBUTTONUP:
+            case mouse_up:
                 handle_mouse_up(event.button);
                 break;
 
-            case SDL_MOUSEMOTION:
+            case mouse_motion:
                 handle_mouse_motion(event.motion);
                 break;
 
-            case SDL_TEXTINPUT:
+            case text_input:
                 handle_text_input(event.text);
                 break;
 
-            case SDL_SYSWMEVENT:
-                handle_syswm(event.syswm);
+            case sys_wm:
+                handle_sys_wm(event.syswm);
                 break;
 
+            default:
+                ;
         }
     }
 
     void
-    handle_mouse_down(const SDL_MouseButtonEvent& event)
+    handle_mouse_down(const sdl::events::mouse_button& event)
     {
         if ((event.button & 1) == 0)
             return;
@@ -391,7 +407,7 @@ struct App {
     }
 
     void
-    handle_mouse_up(const SDL_MouseButtonEvent& event)
+    handle_mouse_up(const sdl::events::mouse_button& event)
     {
         release_pos = {event.x, event.y};
 
@@ -422,7 +438,7 @@ struct App {
     }
 
     void
-    handle_mouse_motion(const SDL_MouseMotionEvent& event)
+    handle_mouse_motion(const sdl::events::mouse_motion& event)
     {
         // ignore motion with no button
         if ((event.state & 1) == 0)
@@ -436,13 +452,13 @@ struct App {
     }
 
     void
-    handle_text_input(const SDL_TextInputEvent& event)
+    handle_text_input(const sdl::events::text_input& event)
     {
         editing_text += event.text;
     }
 
     void
-    handle_syswm(const SDL_SysWMEvent& event)
+    handle_sys_wm(const sdl::events::sys_wm& event)
     {
         TRACE_FUNC;
 
@@ -510,12 +526,15 @@ struct App {
 
         SDL_WiiUSetSWKBDLocale(locales[current_locale]);
 
-        std::string locale_str = "Locale: \""s + locales[current_locale] + "\""s;
-        auto surface = font.render_blended(locale_str, sdl::color::white);
+        std::string msg =
+            "Locale: \""s
+            + locales[current_locale]
+            + "\" (press " CAFE_GLYPH_GAMEPAD_BTN_L " or " CAFE_GLYPH_GAMEPAD_BTN_R " to change)"s;
+        auto surface = font.render_blended(msg, sdl::color::white);
         locale_texture.create(renderer, surface);
     }
 
-};
+}; // struct App
 
 
 int main()
