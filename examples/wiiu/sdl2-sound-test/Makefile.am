@@ -1,3 +1,6 @@
+@INC_AMINCLUDE@
+
+
 EXTRA_DIST = \
 	assets \
 	bootstrap \
@@ -21,9 +24,9 @@ AM_CXXFLAGS = \
 	-Wall -Wextra -Werror
 
 LDADD = \
-	external/sdl2xx/libsdl2xx_mixer.a \
-	external/sdl2xx/libsdl2xx_ttf.a \
-	external/sdl2xx/libsdl2xx.a \
+	external/sdl2xx/lib/libsdl2xx_mixer.la \
+	external/sdl2xx/lib/libsdl2xx_ttf.la \
+	external/sdl2xx/lib/libsdl2xx.la \
 	$(SDL2_LIBS)
 
 
@@ -31,34 +34,31 @@ noinst_PROGRAMS = sdl2-sound-test.elf
 
 sdl2_sound_test_elf_SOURCES = \
 	src/main.cpp \
+	src/tracer.cpp \
+	src/tracer.hpp \
 	src/wiiu-stdout.cpp
 
 sdl2_sound_test_elf_DEPENDENCIES = \
-	external/sdl2xx/libsdl2xx_mixer.a \
-	external/sdl2xx/libsdl2xx_ttf.a \
-	external/sdl2xx/libsdl2xx.a
+	external/sdl2xx/lib/libsdl2xx_mixer.la \
+	external/sdl2xx/lib/libsdl2xx_ttf.la \
+	external/sdl2xx/lib/libsdl2xx.la
 
 
 $(WUHB_FILE): 	$(RPX_FILE)
-#		assets/icon.png \
-#		assets/splash-tv.png \
-#		assets/splash-drc.png
 	$(WUHBTOOL) \
 		$(RPX_FILE) $@ \
 		--content=assets/content \
 		--name="$(PACKAGE_STRING)" \
 		--short-name="$(PACKAGE_TARNAME)"
-#		--icon=assets/icon.png \
-#		--tv-image=assets/splash-tv.png \
-#		--drc-image=assets/splash-drc.png
 
 
 all-local: $(WUHB_FILE)
 
 
 .PHONY: run
+WIILOAD ?= tcp:wiiu
 run: $(WUHB_FILE)
-	WIILOAD=tcp:wiiu wiiload $<
+	WIILOAD=$(WIILOAD) wiiload $<
 
 
 .PHONY: wiiu-install wiiu-uninstall
@@ -74,9 +74,6 @@ wiiu-uninstall:
 DISTCLEANFILES = $(AMINCLUDE)
 
 CLEANFILES = $(WUHB_FILE)
-
-@INC_AMINCLUDE@
-
 
 
 .PHONY: company

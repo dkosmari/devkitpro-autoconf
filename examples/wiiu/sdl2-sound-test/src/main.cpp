@@ -16,10 +16,11 @@
 #include <sdl2xx/mix.hpp>
 #include <sdl2xx/ttf.hpp>
 
+#include "tracer.hpp"
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
-
 
 #ifndef PACKAGE_STRING
 #define PACKAGE_STRING ""
@@ -95,21 +96,20 @@ struct Button {
     bool
     handle_event(const sdl::events::event& e)
     {
-        switch (e.type) {
+        switch (sdl::events::type{e.type}) {
+            using enum sdl::events::type;
 
-            case sdl::events::type::e_mouse_down:
+            case mouse_down:
                 if (is_inside(e.button.x, e.button.y))
                     click_started = true;
-                // TODO: change rendering when click_started
                 return click_started;
 
-            case sdl::events::type::e_mouse_up:
+            case mouse_up:
                 if (!is_inside(e.button.x, e.button.y)) {
                     click_started = false;
                     return false;
                 }
                 if (click_started && on_click) {
-                    cout << "Button calling on_click callback." << endl;
                     on_click();
                 }
                 click_started = false;
@@ -176,6 +176,7 @@ struct App {
         sdl::renderer::flag::present_vsync
     };
 
+    sdl::rwops font_blob;
     sdl::ttf::font font;
 
     sdl::mix::chunk sound_front_left   {"/vol/content/front-left.ogg"};
@@ -197,7 +198,7 @@ struct App {
         renderer.set_logical_size(window.get_size());
 
         {
-            cout << "Loading system font" << endl;
+            TRACE("Loading system font");
             void* system_font_data = nullptr;
             uint32_t system_font_size = 0;
             if (!OSGetSharedData(OS_SHAREDDATATYPE_FONT_STANDARD,
@@ -206,10 +207,8 @@ struct App {
                                  &system_font_size))
                 throw std::runtime_error{"could not get system font"};
 
-            font.create(SDL_RWFromConstMem(system_font_data, system_font_size),
-                        1,
-                        48);
-            cout << "... done" << endl;
+            font_blob.create(static_cast<const void*>(system_font_data), system_font_size);
+            font.create(font_blob, 48);
         }
 
         buttons.emplace_back(renderer, font,
@@ -247,16 +246,17 @@ struct App {
     void
     run()
     {
+        TRACE_FUNC;
         running = true;
         while (running) {
             draw();
-            handle_events();
+            process_events();
         }
     }
 
 
     void
-    handle_events()
+    process_events()
     {
         sdl::events::event event;
         while (running && sdl::events::poll(event))
@@ -266,31 +266,33 @@ struct App {
 
     void handle_event(const sdl::events::event& event)
     {
-        switch (event.type) {
+        switch (sdl::events::type{event.type}) {
+            using enum sdl::events::type;
 
-            case sdl::events::type::e_quit:
+            case quit:
                 cout << "Quitting..." << endl;
                 running = false;
                 break;
 
-            case sdl::events::type::e_controller_device_added: {
+            case controller_device_added: {
                 auto c = SDL_GameControllerOpen(event.cdevice.which);
                 cout << "Added controller : " << SDL_GameControllerName(c) << endl;
                 break;
             }
 
-            case sdl::events::type::e_controller_device_removed:
+            case controller_device_removed:
                 if (auto ctrlr = SDL_GameControllerFromInstanceID(event.cdevice.which))
                     SDL_GameControllerClose(ctrlr);
                 break;
 
-            case sdl::events::type::e_mouse_down:
-            case sdl::events::type::e_mouse_up:
-                cout << "Mouse at " << event.button.x << " , " << event.button.y << endl;
+            case mouse_down:
+            case mouse_up:
                 for (auto& b : buttons)
                     b.handle_event(event);
                 break;
 
+            default:
+                ;
         }
     }
 
@@ -311,7 +313,7 @@ struct App {
     void
     play_front_left()
     {
-        cout << "Playing front left." << endl;
+        TRACE_FUNC;
         sound_front_left.play();
     }
 
@@ -319,7 +321,7 @@ struct App {
     void
     play_front_right()
     {
-        cout << "Playing front right." << endl;
+        TRACE_FUNC;
         sound_front_right.play();
     }
 
@@ -327,7 +329,7 @@ struct App {
     void
     play_front_center()
     {
-        cout << "Playing front center." << endl;
+        TRACE_FUNC;
         sound_front_center.play();
     }
 
@@ -335,7 +337,7 @@ struct App {
     void
     play_rear_left()
     {
-        cout << "Playing rear left." << endl;
+        TRACE_FUNC;
         sound_rear_left.play();
     }
 
@@ -343,7 +345,7 @@ struct App {
     void
     play_rear_right()
     {
-        cout << "Playing rear right." << endl;
+        TRACE_FUNC;
         sound_rear_right.play();
     }
 
@@ -351,7 +353,7 @@ struct App {
     void
     play_lfe()
     {
-        cout << "Playing LFE." << endl;
+        TRACE_FUNC;
         sound_lfe.play();
     }
 
@@ -360,7 +362,7 @@ struct App {
 
 int main(int, char* [])
 {
-
+    TRACE_FUNC;
     try {
         App app;
         app.run();

@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.71])
 AC_INIT([SDL2 Sound Test], [1.0], [], [sdl2-sound-test])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_MACRO_DIR([m4])
@@ -10,8 +10,9 @@ AC_CONFIG_HEADERS([config.h])
 
 DEVKITPRO_WUT_INIT
 
-AM_INIT_AUTOMAKE([foreign subdir-objects])
+AM_INIT_AUTOMAKE([foreign subdir-objects tar-pax])
 
+LT_INIT([disable-shared])
 
 AC_PROG_CXX
 AX_APPEND_COMPILE_FLAGS([-std=c++23], [CXX])
